@@ -67,30 +67,8 @@ function get_statistics_data_for_list_of_gd_places($gd_place_ids_list)
 
 function get_statistics_data_for_single_gd_place($gd_place_id)
 {
-    $fields_array = array(
-        'num of units available',
-        'num of m2 available',
-        'num of m3 available',
-        'average price',
-        'average m2 price',
-        'average m3 price',
-        'mini size average price',
-        'mini size average m2 price',
-        'mini size average m3 price',
-        'small size average price',
-        'small size average m2 price',
-        'small size average m3 price',
-        'medium size average price',
-        'medium size average m2 price',
-        'medium size average m3 price',
-        'large size average price',
-        'large size average m2 price',
-        'large size average m3 price',
-        'very large size average price',
-        'very large size average m2 price',
-        'very large size average m3 price'
-    );
-
+    global $statistics_data_fields;
+    
     $return_array = [];
 
     foreach ($fields_array as $field) {

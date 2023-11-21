@@ -1,5 +1,29 @@
 <?php
 
+$statistics_data_fields = array(
+    'num of units available',
+    'num of m2 available',
+    'num of m3 available',
+    'average price',
+    'average m2 price',
+    'average m3 price',
+    'mini size average price',
+    'mini size average m2 price',
+    'mini size average m3 price',
+    'small size average price',
+    'small size average m2 price',
+    'small size average m3 price',
+    'medium size average price',
+    'medium size average m2 price',
+    'medium size average m3 price',
+    'large size average price',
+    'large size average m2 price',
+    'large size average m3 price',
+    'very large size average price',
+    'very large size average m2 price',
+    'very large size average m3 price'
+);
+
 /**
  * Extracts the geolocation slug from the current URL.
  *
@@ -19,6 +43,10 @@ function extract_geolocation_slug_via_url() {
 
    // Parse the URL to get the path
    $parsedUrl = parse_url($url);
+
+   if (!isset($parsedUrl['path'])) {
+       return '';
+   }
 
    // Split the path into parts
    $pathParts = explode('/', trim($parsedUrl['path'], '/'));
