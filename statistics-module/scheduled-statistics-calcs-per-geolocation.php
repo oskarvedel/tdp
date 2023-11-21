@@ -105,6 +105,9 @@ function update_gd_place_list_for_geolocation_func()
 {
     //get current list of geolocation ids
     $geolocation_id = extract_geolocation_id_via_url();
+    if (!$geolocation_id) {
+        return;
+    }
     $current_gd_place_list = get_post_meta($geolocation_id, 'gd_place_list', false);
 
     //get list of place ids from archive result
