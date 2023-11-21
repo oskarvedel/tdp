@@ -123,6 +123,9 @@ function update_gd_place_list_for_geolocation_func()
 
     // Check if the lists are different
     if ($current_gd_place_list !== $new_gd_place_list) {
+
+        //if current_gd_place_list is unitialized, initialize it to prevent an error in the array_diff call
+        $current_gd_place_list = $current_gd_place_list ?? [];
         // Find the added IDs
         $added_ids = array_diff($new_gd_place_list, $current_gd_place_list);
         if (!empty($added_ids)) {
