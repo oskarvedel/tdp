@@ -26,11 +26,11 @@ function sort_depotrum_by_price($depotrum_items)
 function custom_depotrum_list_shortcode()
 {
     $current_pod = pods();
-    
+
     // Check if the Pod object exists and the field "partner" is set
     if ($current_pod && $current_pod->exists()) {
         $depotrum_items = $current_pod->field("depotrum");
-		$hide_units = $current_pod->field("hide_units");
+        $hide_units = $current_pod->field("hide_units");
 
         if ($depotrum_items && !empty($depotrum_items) && !$hide_units) {
             $IdsSortedByPrice = sort_depotrum_by_price($depotrum_items);
@@ -106,10 +106,10 @@ function custom_depotrum_list_shortcode()
                     $output .= '</div>';
 
                     array_push($OutputArray, $output);
-					
-					if (geodir_is_page('post_type')) {
-                    if (++$i >= 8) break;
-						}
+
+                    if (geodir_is_page('post_type')) {
+                        if (++$i >= 8) break;
+                    }
                 }
             }
 
@@ -118,11 +118,11 @@ function custom_depotrum_list_shortcode()
             }
 
             $finalOutput .= "</div>";
-			if (geodir_is_page('post_type')) {
-            $finalOutput .= '<form action="' . get_permalink($lokationId) . '">';
-            $finalOutput .= '<input type="submit" class="view-all-button" value="Se alle priser" />';
-            $finalOutput .= '</form>';
-			}
+            if (geodir_is_page('post_type')) {
+                $finalOutput .= '<form action="' . get_permalink($lokationId) . '">';
+                $finalOutput .= '<input type="submit" class="view-all-button" value="Se alle priser" />';
+                $finalOutput .= '</form>';
+            }
             return $finalOutput;
         }
     }
