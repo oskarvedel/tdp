@@ -7,9 +7,10 @@ require_once dirname(__FILE__) . '/statistics-common.php';
  *
  * @return array An array of gd_place IDs.
  */
-function get_all_gd_place_ids_from_archive_result()
+function get_all_gd_places_from_archive_result()
 {
     $all_post_ids = array();
+    $all_post_names = array();
 
     // Loop through each post in the current archive result
     if (have_posts()) :
@@ -18,11 +19,15 @@ function get_all_gd_place_ids_from_archive_result()
             if (get_post_type() === 'gd_place') {
                 // Add gd_place ID to the array
                 $all_post_ids[] = get_the_ID();
+                $all_post_names[] = get_the_title();
             }
         endwhile;
     endif;
 
-    return $all_post_ids;
+    return array(
+        'post_ids' => $all_post_ids,
+        'post_names' => $all_post_names
+    );
 }
 
 /**
@@ -45,10 +50,11 @@ function get_statistics_data_for_list_of_gd_places($gd_place_ids_list)
         if ($statistics_data_for_single_gd_place) {
             // Add depotrum data to the existing statistics data
             foreach ($statistics_data_for_single_gd_place as $field => $value) {
-                if (isset($statistics_data[$field])) {
-                    $statistics_data[$field] += $value;
+                if (strpos($field, 'smallest') !== false || strpos($field, 'largest') !== false) {
+                    trigger_error("updating smallest or largest size field", E_USER_WARNING);
+                    $statistics_data[$field] = find_smallest_or_largest_m2($field,$value,$statistics_data);
                 } else {
-                    $statistics_data[$field] = $value;
+                add_fields($field,$value,$statistics_data);
                 }
             }
             $counter++;
@@ -62,8 +68,36 @@ function get_statistics_data_for_list_of_gd_places($gd_place_ids_list)
         }
     }
 
+    $statistics_data['num of gd_places'] = count($gd_place_ids_list);
+    //error_log("num of gd places is " . $statistics_data['num of gd_places'], E_USER_WARNING);
+
     return $statistics_data;
 }
+
+function add_fields($field,$value,$statistics_data)
+{
+    if (isset($statistics_data[$field])) {
+        $statistics_data[$field] += $value;
+    } else {
+        $statistics_data[$field] = $value;
+    }
+}
+
+
+function find_smallest_or_largest_m2($field,$value,$statistics_data)
+{
+    if (!isset($statistics_data[$field])) {
+        return $value;
+    }
+
+    if ( (strpos($field, 'smallest') && $value < $statistics_data[$field]) || (strpos($field, 'largest') && $value > $statistics_data[$field])) {
+        trigger_error("value unset or bigger or smallerthan field already set, updating value", E_USER_WARNING);
+        return $value;
+    } else {
+        return $statistics_data[$field];
+    }
+}
+
 
 function get_statistics_data_for_single_gd_place($gd_place_id)
 {
@@ -71,7 +105,7 @@ function get_statistics_data_for_single_gd_place($gd_place_id)
     
     $return_array = [];
 
-    foreach ($fields_array as $field) {
+    foreach ($statistics_data_fields as $field) {
         $value = get_post_meta($gd_place_id, $field, true);
         $return_array[$field] = $value;
     }
@@ -86,10 +120,10 @@ function update_gd_place_list_for_geolocation_func()
     if (!$geolocation_id) {
         return;
     }
-    $current_gd_place_list = get_post_meta($geolocation_id, 'gd_place_list', false);
+    $current_gd_place_id_list = get_post_meta($geolocation_id, 'gd_place_list', false);
 
     //get list of place ids from archive result
-    $new_gd_place_list = get_all_gd_place_ids_from_archive_result();
+    $new_gd_place_list = get_all_gd_places_from_archive_result();
 
     /*
     echo "current gd_place_list var_dump:";
@@ -103,13 +137,12 @@ function update_gd_place_list_for_geolocation_func()
     $geolocation_slug = extract_geolocation_slug_via_url();
 
     // Check if the lists are different
-    if ($current_gd_place_list !== $new_gd_place_list) {
-
+    if ($current_gd_place_id_list !== $new_gd_place_list['post_ids']) {
         //if current_gd_place_list is unitialized, initialize it to prevent an error in the array_diff call
         $current_gd_place_list = is_bool($current_gd_place_list) ? [] : $current_gd_place_list;
         $current_gd_place_list = $current_gd_place_list ?? [];
         // Find the added IDs
-        $added_ids = array_diff($new_gd_place_list, $current_gd_place_list);
+        $added_ids = array_diff($$new_gd_place_list['post_ids'], $current_gd_place_list);
         if (!empty($added_ids)) {
             $message = 'gd_place_ids updated for location ' . $geolocation_slug . '/' . $geolocation_id . "\n";
             $message .= 'New gd_place_list: ' . implode(', ', $new_gd_place_list) . "\n";
@@ -118,8 +151,11 @@ function update_gd_place_list_for_geolocation_func()
         }
     }
 
-    update_post_meta($geolocation_id, 'gd_place_list', $new_gd_place_list);
+    update_post_meta($geolocation_id, 'gd_place_names', $new_gd_place_list['post_names']);
+    update_post_meta($geolocation_id, 'gd_place_list', $new_gd_place_list['post_ids']);
 }
+
+
 
 add_shortcode("update_gd_place_list_for_geolocation", "update_gd_place_list_for_geolocation_func");
 
@@ -139,7 +175,7 @@ function update_statistics_data_for_all_geolocations()
                 // Generate and execute the update_post_meta line
                 update_post_meta($geolocation_id, $field, $value);
                 echo $field . ": " . $value . "<br>";
-        }
+            }
     }  
 }
 

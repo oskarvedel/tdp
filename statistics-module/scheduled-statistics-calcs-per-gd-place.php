@@ -7,7 +7,7 @@
  * @return array An array containing depotrum data for the specified gd_place.
  */
 
-function calc_depotrum_data_for_single_gd_place($gd_place_id)
+function get_depotrum_data_for_single_gd_place($gd_place_id)
 {
     $gd_place = pods('gd_place', $gd_place_id);
     $return_array = [];
@@ -84,6 +84,36 @@ function find_num_of_m2_or_m3_available($depotrum_data, $m2_or_m3)
 }
 
 /**
+ * Finds the depotrum item with the smallest m2 size.
+ *
+ * @param array $depotrum_data An array of depotrum data containing m2 sizes.
+ *
+ * @return array|null The depotrum item with the smallest m2 size, or null if no item is found.
+ */
+/**
+ * Finds the depotrum item with the smallest or largest m2 size.
+ *
+ * @param array $depotrum_data An array of depotrum data containing m2 sizes.
+ * @param string $smallest_or_largest Specifies whether to find the smallest or largest m2 size.
+ *
+ * @return array|null The depotrum item with the smallest or largest m2 size, or null if no item is found.
+ */
+function find_smallest_or_largest_m2_size($depotrum_data, $smallest_or_largest)
+{
+    $return_value = null;
+
+    // Loop through each item in $depotrum_data
+    foreach ($depotrum_data as $depotrum_data_item) {
+        // Check if the m2 size is smaller or larger than the current m2 size
+        if ($return_value === null || ($smallest_or_largest === 'smallest' && $depotrum_data_item['m2'] < $return_value) || ($smallest_or_largest === 'largest' && $depotrum_data_item['m2'] > $return_value)) {
+            $return_value = $depotrum_data_item['m2'];
+        }
+    }
+
+    return $return_value;
+}
+
+/**
  * Calculates the average price based on specified criteria.
  *
  * @param array $depotrum_data An array of depotrum data containing prices and units.
@@ -132,11 +162,14 @@ function update_statistics_data_for_all_gd_places()
     $gd_places = get_posts(array('post_type' => 'gd_place', 'posts_per_page' => -1));
 
     foreach ($gd_places as $gd_place) {
-        $depotrum_data = calc_depotrum_data_for_single_gd_place($gd_place->ID);
+        $depotrum_data = get_depotrum_data_for_single_gd_place($gd_place->ID);
         if (!empty($depotrum_data)) {
             update_post_meta($gd_place->ID, 'num of units available', find_num_of_units_available($depotrum_data, 0, 1000));
             update_post_meta($gd_place->ID, 'num of m2 available', find_num_of_m2_or_m3_available($depotrum_data, 'm2'));
             update_post_meta($gd_place->ID, 'num of m3 available', find_num_of_m2_or_m3_available($depotrum_data, 'm3'));
+
+            update_post_meta($gd_place->ID, 'smallest size', find_smallest_or_largest_m2_size($depotrum_data,'smallest'));
+            update_post_meta($gd_place->ID, 'largest size', find_smallest_or_largest_m2_size($depotrum_data,'largest'));
 
             update_post_meta($gd_place->ID, 'average price', find_average_price($depotrum_data, 0, 1000, ''));
             update_post_meta($gd_place->ID, 'average m2 price', find_average_price($depotrum_data, 0, 1000, 'm2'));

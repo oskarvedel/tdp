@@ -16,7 +16,7 @@ function tjekdepot_plugin_activation_function() {
 // Define the deactivation function
 function tjekdepot_plugin_deactivation_function() {
     // Unschedule the daily event when the plugin or theme is deactivated
-    trigger_error("tjekdepot_daily_function deactivation test", E_USER_WARNING);
+    trigger_error("tjekdepot_daily_function deactivated", E_USER_WARNING);
     wp_clear_scheduled_hook('tjekdepot_daily_event');
 }
 
@@ -26,7 +26,7 @@ register_deactivation_hook(__FILE__, 'tjekdepot_plugin_deactivation_function');
 
 // Define the function to be executed daily
 function tjekdepot_daily_function() {
-    trigger_error("tjekdepot_daily_function activation test", E_USER_WARNING);
+    trigger_error("tjekdepot_daily_function activated", E_USER_WARNING);
     update_statistics_data();
 }
 

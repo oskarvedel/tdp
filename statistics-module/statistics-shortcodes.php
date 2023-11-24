@@ -20,17 +20,4 @@ function gd_location_metadata_shortcode_func($atts) {
 
 add_shortcode('gd_location_statistics_field_shortcode', 'gd_location_metadata_shortcode_func');
 
-function gd_location_statistics_text_func($atts) {
-
-     global $statistics_data_fields;
-
-      $return_array = [];
-  
-      foreach ($statistics_data_fields as $field) {
-          $value = get_post_meta($gd_place_id, $field, true);
-          $return_array[$field] = $value;
-      }
-}
-
-add_shortcode('gd_location_statistics_text_shortcode', 'gd_location_statistics_text_func');
 ?>
