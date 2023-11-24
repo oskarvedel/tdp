@@ -45,13 +45,11 @@ function get_statistics_data_for_list_of_gd_places($gd_place_ids_list)
     foreach ($gd_place_ids_list as $gd_place_id) {
         // Get depotrum data for a single gd_place
         $statistics_data_for_single_gd_place = get_statistics_data_for_single_gd_place($gd_place_id);
-
         // Check if depotrum data is available for the gd_place
         if ($statistics_data_for_single_gd_place) {
             // Add depotrum data to the existing statistics data
             foreach ($statistics_data_for_single_gd_place as $field => $value) {
                 if (strpos($field, 'smallest') !== false || strpos($field, 'largest') !== false) {
-                    trigger_error("updating smallest or largest size field", E_USER_WARNING);
                     $statistics_data[$field] = find_smallest_or_largest_m2($field,$value,$statistics_data);
                 } else {
                 add_fields($field,$value,$statistics_data);
@@ -91,7 +89,6 @@ function find_smallest_or_largest_m2($field,$value,$statistics_data)
     }
 
     if ( (strpos($field, 'smallest') && $value < $statistics_data[$field]) || (strpos($field, 'largest') && $value > $statistics_data[$field])) {
-        trigger_error("value unset or bigger or smallerthan field already set, updating value", E_USER_WARNING);
         return $value;
     } else {
         return $statistics_data[$field];
