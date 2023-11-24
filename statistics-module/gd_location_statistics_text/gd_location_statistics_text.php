@@ -8,6 +8,12 @@ function gd_location_statistics_text_func($atts) {
 
      global $statistics_data_fields;
 
+     $num_of_gd_places = get_post_meta($gd_location_id, 'num of gd_places', true);
+
+     if ($num_of_gd_places <= 2) {
+          return;
+     }
+
       $return_array = [];
   
       foreach ($statistics_data_fields as $field) {
@@ -18,43 +24,54 @@ function gd_location_statistics_text_func($atts) {
 
      $archive_title_trimmed = substr(get_the_archive_title(),2);
 
-     $num_of_gd_places = get_post_meta($gd_location_id, 'num of gd_places', true);
 
-     if (!$num_of_gd_places <= 2) {
-          return;
+     $gd_place_names = get_post_meta($gd_location_id, 'gd_place_names', true);
+
+     if (!empty($gd_place_names)) {
+          $fulltext .= '<h4>Der er i alt [num of gd_places] udbydere af depotrum i [location]</h4>';
+          $fulltext .= '<ul>';
+          foreach ($gd_place_names as $place_name) {
+               $fulltext .= '<li>' . $place_name . '</li>';
+          }
+          $fulltext .= '</ul>';
      }
 
      $fulltext = str_replace("[num of gd_places]", $num_of_gd_places, $fulltext);
 
      $fulltext = str_replace("[location]", $archive_title_trimmed, $fulltext);
 
+     foreach ($statistics_data_fields as $field) {
+          $value = get_post_meta($gd_location_id, $field, true);
+          $fulltext = str_replace("[$field]", $value, $fulltext);
+     }
+
+
      echo $fulltext;
-      
-}
+     }
 
-add_shortcode('gd_location_statistics_text_shortcode', 'gd_location_statistics_text_func');
+     add_shortcode('gd_location_statistics_text_shortcode', 'gd_location_statistics_text_func');
 
-$fulltext = '<h3>Statistik over ledige depotrum i [location]</h3>
+     $fulltext = '<h3>Statistik over ledige depotrum i [location]</h3>
 
-     <p><strong>Der er [num of gd_places] udbydere af depotrum i [location], og der er lige nu ledige depotrum fra [smallest size] m² op til [largest size] m²</strong></p>
+           <p><strong>Der er [num of gd_places] udbydere af depotrum i [location], og der er lige nu ledige depotrum fra [smallest size] m² op til [largest size] m²</strong></p>
 
-     <h4>Priser og størrelser:</h4>
+           <h4>Priser og størrelser:</h4>
 
-     <p><strong>Den gennemsnitlige pris for et ledigt depotrum i [location] er: [average price] kr</strong></p>
+           <p><strong>Den gennemsnitlige pris for et ledigt depotrum i [location] er: [average price] kr</strong></p>
 
-     <p><strong>Den gennemsnitlige pris pr. kvadratmeter for et ledigt depotrum i [location] er: [average m2 price] kr/m²</strong></p>
+           <p><strong>Den gennemsnitlige pris pr. kvadratmeter for et ledigt depotrum i [location] er: [average m2 price] kr/m²</strong></p>
 
-     <p><strong>Den gennemsnitlige pris pr. kubikmeter for et ledigt depotrum i [location] er: [average m3 price] kr/m³</strong></p>
+           <p><strong>Den gennemsnitlige pris pr. kubikmeter for et ledigt depotrum i [location] er: [average m3 price] kr/m³</strong></p>
 
-     <h4>Priser efter størrelse:</h4>
+           <h4>Priser efter størrelse:</h4>
 
-     <p><strong>Et ledigt mini depotrum (op til 2 m²) koster i gennemsnit: [mini size average price] kr i [location]</strong></p>
+           <p><strong>Et ledigt mini depotrum (op til 2 m²) koster i gennemsnit: [mini size average price] kr i [location]</strong></p>
 
-     <p><strong>Et ledigt lille depotrum (mellem 2 og 7 m²) i gennemsnit: [small size average price] kr i [location]</strong></p>
+           <p><strong>Et ledigt lille depotrum (mellem 2 og 7 m²) i gennemsnit: [small size average price] kr i [location]</strong></p>
 
-     <p><strong>Et ledigt mellem depotrum (mellem 7 og 18 m²) i gennemsnit: [medium size average price] kr i [location]</strong></p>
+           <p><strong>Et ledigt mellem depotrum (mellem 7 og 18 m²) i gennemsnit: [medium size average price] kr i [location]</strong></p>
 
-     <p><strong>Et ledigt stort depotrum (mellem 18 og 25 m²) i gennemsnit: [large size average price] kr i [location]</strong></p>
+           <p><strong>Et ledigt stort depotrum (mellem 18 og 25 m²) i gennemsnit: [large size average price] kr i [location]</strong></p>
 
-     <p><strong>Et ledigt meget stort depotrum (over 25 m²) i gennemsnit: [very large size average price] kr i [location]</strong></p>';
-?>
+           <p><strong>Et ledigt meget stort depotrum (over 25 m²) i gennemsnit: [very large size average price] kr i [location]</strong></p>';
+

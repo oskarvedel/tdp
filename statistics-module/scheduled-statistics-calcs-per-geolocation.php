@@ -67,8 +67,6 @@ function get_statistics_data_for_list_of_gd_places($gd_place_ids_list)
     }
 
     $statistics_data['num of gd_places'] = count($gd_place_ids_list);
-    //error_log("num of gd places is " . $statistics_data['num of gd_places'], E_USER_WARNING);
-
     return $statistics_data;
 }
 
@@ -164,7 +162,7 @@ function update_statistics_data_for_all_geolocations()
             echo "updating data for geolocation: " . $geolocation_id . "<br>";
 
             $gd_place_ids_list = get_post_meta($geolocation_id, 'gd_place_list', false);
-
+         
             $depotrum_data = get_statistics_data_for_list_of_gd_places($gd_place_ids_list);
 
             foreach ($depotrum_data as $field => $value) {
