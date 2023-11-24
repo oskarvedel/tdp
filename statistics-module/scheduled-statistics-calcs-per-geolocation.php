@@ -136,10 +136,9 @@ function update_gd_place_list_for_geolocation_func()
     // Check if the lists are different
     if ($current_gd_place_id_list !== $new_gd_place_list['post_ids']) {
         //if current_gd_place_list is unitialized, initialize it to prevent an error in the array_diff call
-        $current_gd_place_list = is_bool($current_gd_place_list) ? [] : $current_gd_place_list;
-        $current_gd_place_list = $current_gd_place_list ?? [];
+        $current_gd_place_id_list = is_bool($current_gd_place_id_list) ? [] : $current_gd_place_id_list;
         // Find the added IDs
-        $added_ids = array_diff($$new_gd_place_list['post_ids'], $current_gd_place_list);
+        $added_ids = array_diff($new_gd_place_list['post_ids'], $current_gd_place_id_list);
         if (!empty($added_ids)) {
             $message = 'gd_place_ids updated for location ' . $geolocation_slug . '/' . $geolocation_id . "\n";
             $message .= 'New gd_place_list: ' . implode(', ', $new_gd_place_list) . "\n";

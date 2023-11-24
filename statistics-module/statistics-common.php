@@ -4,6 +4,7 @@ $statistics_data_fields = array(
     'num of units available',
     'num of m2 available',
     'num of m3 available',
+    'average price',
     'smallest size',
     'largest size',
     'average m2 price',
