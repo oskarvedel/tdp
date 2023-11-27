@@ -52,7 +52,8 @@ function get_statistics_data_for_list_of_gd_places($gd_place_ids_list)
                 if (strpos($field, 'smallest') !== false || strpos($field, 'largest') !== false) {
                     $statistics_data[$field] = find_smallest_or_largest_m2($field,$value,$statistics_data);
                 } else {
-                add_fields($field,$value,$statistics_data);
+                    $statistics_data[$field] = add_fields($field,$value,$statistics_data);
+                //trigger_error("updarting non-smallestorlargest field: " . $field . " value: " . $value, E_USER_WARNING);
                 }
             }
             $counter++;
@@ -66,16 +67,15 @@ function get_statistics_data_for_list_of_gd_places($gd_place_ids_list)
         }
     }
 
-    $statistics_data['num of gd_places'] = count($gd_place_ids_list);
     return $statistics_data;
 }
 
 function add_fields($field,$value,$statistics_data)
 {
     if (isset($statistics_data[$field])) {
-        $statistics_data[$field] += $value;
+        return $statistics_data[$field] += $value;
     } else {
-        $statistics_data[$field] = $value;
+        return $statistics_data[$field] = $value;
     }
 }
 
@@ -139,7 +139,11 @@ function update_gd_place_list_for_geolocation_func()
         $added_ids = array_diff($new_gd_place_list['post_ids'], $current_gd_place_id_list);
         if (!empty($added_ids)) {
             $message = 'gd_place_ids updated for location ' . $geolocation_slug . '/' . $geolocation_id . "\n";
-            $message .= 'New gd_place_list: ' . implode(', ', $new_gd_place_list) . "\n";
+            $message .= 'New gd_place_list:';
+            foreach ($new_gd_place_list['post_names'] as $post_name) {
+                $message .= "\n" . $post_name;
+            }
+            $message .= "\n";
             $message .= 'Added IDs: ' . implode(', ', $added_ids) . "\n";
             trigger_error($message, E_USER_WARNING);
         }
@@ -147,6 +151,7 @@ function update_gd_place_list_for_geolocation_func()
 
     update_post_meta($geolocation_id, 'gd_place_names', $new_gd_place_list['post_names']);
     update_post_meta($geolocation_id, 'gd_place_list', $new_gd_place_list['post_ids']);
+    update_post_meta($geolocation_id, 'num of gd_places', count($new_gd_place_list['post_ids']));
 }
 
 
@@ -159,16 +164,14 @@ function update_statistics_data_for_all_geolocations()
 
         foreach ($geolocations as $geolocation) {
             $geolocation_id = $geolocation->ID;
-            echo "updating data for geolocation: " . $geolocation_id . "<br>";
+            //trigger_error("updating data for geolocation: " . $geolocation->post_name, E_USER_WARNING);
 
-            $gd_place_ids_list = get_post_meta($geolocation_id, 'gd_place_list', false);
-         
-            $depotrum_data = get_statistics_data_for_list_of_gd_places($gd_place_ids_list);
-
+            $gd_place_list = get_post_meta($geolocation_id, 'gd_place_list', false);
+            
+            $depotrum_data = get_statistics_data_for_list_of_gd_places($gd_place_list);
             foreach ($depotrum_data as $field => $value) {
-                // Generate and execute the update_post_meta line
                 update_post_meta($geolocation_id, $field, $value);
-                echo $field . ": " . $value . "<br>";
+                //trigger_error("updating field: " . $field . " with value: " . $value, E_USER_WARNING);
             }
     }  
 }

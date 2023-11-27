@@ -14,7 +14,6 @@ function gd_location_statistics_text_func($atts) {
           return;
      }
 
-      $return_array = [];
   
       foreach ($statistics_data_fields as $field) {
           $value = get_post_meta($gd_location_id, $field, true);

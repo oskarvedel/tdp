@@ -163,6 +163,7 @@ function update_statistics_data_for_all_gd_places()
 
     foreach ($gd_places as $gd_place) {
         $depotrum_data = get_depotrum_data_for_single_gd_place($gd_place->ID);
+        //trigger_error("depotrum_data: for " . $gd_place->post_name . print_r($depotrum_data, true), E_USER_WARNING);
         if (!empty($depotrum_data)) {
             update_post_meta($gd_place->ID, 'num of units available', find_num_of_units_available($depotrum_data, 0, 1000));
             update_post_meta($gd_place->ID, 'num of m2 available', find_num_of_m2_or_m3_available($depotrum_data, 'm2'));
