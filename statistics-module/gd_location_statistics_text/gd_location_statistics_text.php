@@ -4,9 +4,13 @@ function gd_location_statistics_text_func($atts) {
 
      $gd_location_id = extract_geolocation_id_via_url();
 
-     global $fulltext;  
+     global $text_template;
+
+     $output = "";
+
 
      global $statistics_data_fields;
+     global $statistics_data_fields_texts;
 
      $num_of_gd_places = get_post_meta($gd_location_id, 'num of gd_places', true);
 
@@ -14,11 +18,12 @@ function gd_location_statistics_text_func($atts) {
           return;
      }
 
-  
-      foreach ($statistics_data_fields as $field) {
-          $value = get_post_meta($gd_location_id, $field, true);
-          $fulltext = str_replace("[$field]", $value, $fulltext);
-      }
+     foreach ($statistics_data_fields_texts as $label => $text) {
+          $value = get_post_meta($gd_location_id, $label, true);
+          if (!empty($value)) { 
+               $text_template = str_replace("[$label]", '<p>' . $text . '</p>', $text_template);
+          }
+     }
 
      $archive_title_trimmed = substr(get_the_archive_title(),2);
 
@@ -26,50 +31,61 @@ function gd_location_statistics_text_func($atts) {
      $gd_place_names = get_post_meta($gd_location_id, 'gd_place_names', true);
 
      if (!empty($gd_place_names)) {
-          $fulltext .= '<h5>Der er i alt [num of gd_places] udbydere af depotrum i [location]:</h5>';
-          $fulltext .= '<ul>';
+          $text_template .= '<h5>Der er i alt [num of gd_places] udbydere af depotrum i [location]:</h5>';
+          $text_template .= '<ul>';
           foreach ($gd_place_names as $place_name) {
-               $fulltext .= '<li>' . $place_name . '</li>';
+               $text_template .= '<li>' . $place_name . '</li>';
           }
-          $fulltext .= '</ul>';
+          $text_template .= '</ul>';
      }
+     
 
-     $fulltext = str_replace("[num of gd_places]", $num_of_gd_places, $fulltext);
+     $text_template = str_replace("[num of gd_places]", $num_of_gd_places, $text_template);
 
-     $fulltext = str_replace("[location]", $archive_title_trimmed, $fulltext);
+     $text_template = str_replace("[location]", $archive_title_trimmed, $text_template);
+
 
      foreach ($statistics_data_fields as $field) {
           $value = get_post_meta($gd_location_id, $field, true);
-          $fulltext = str_replace("[$field]", round($value,2), $fulltext);
+          if (!empty($value)) {
+               $rounded = floatval(round($value,2));
+               $numberformat = number_format($value,0,',', '.');
+               $text_template = str_replace("[$field]", $numberformat, $text_template);
+          }
      }
 
-
-     echo $fulltext;
+     echo $text_template;
      }
 
      add_shortcode('gd_location_statistics_text_shortcode', 'gd_location_statistics_text_func');
 
-     $fulltext = '<h3>Statistik over ledige depotrum i [location]:</h3>
+     $text_template = '<h3>Statistik over ledige depotrum i [location]:</h3>
+          <h4>Hvad koster et ledigt depotrum i [location]?</h4>
+          [average price]
+          [smallest size]
+          [average m2 price]
+          [average m3 price]
+          <h4>Priser på ledige depotrum i [location]</h4>
+          [mini size average price]
+          [small size average price]
+          [medium size average price]
+          [large size average price]
+          [very large size average price]
+           ';
 
-           <p>Der er er lige nu ledige depotrum fra <strong>[smallest size] m² op til [largest size] m²</strong> i [location]</p>
 
-           <h4>Hvad koster et ledigt depotrum i [location]?</h4>
+     $statistics_data_fields_texts = array(
+     'average price' => 'Den gennemsnitlige pris for et depotrum er: <strong>[average price] kr</strong>',
+     'smallest size' => 'Der er er lige nu ledige depotrum fra <strong>[smallest size] m² op til [largest size] m²</strong> i [location]',
+     'average m2 price' => 'Den gennemsnitlige pris pr. kvadratmeter for et depotrum er: <strong>[average m2 price] kr/m²</strong>',
+     'average m3 price' => 'Den gennemsnitlige pris pr. kubikmeter for et depotrum er: <strong>[average m3 price] kr/m³</strong>',
+     'mini size average price' =>  'Et mini depotrum (op til 2 m²) koster i gennemsnit: <strong>[mini size average price] kr</strong>',
+     'small size average price' => 'Et lille depotrum (mellem 2 og 7 m²) koster i gennemsnit: <strong>[small size average price] kr</strong>',
+     'medium size average price' =>  'Et mellem depotrum (mellem 7 og 18 m²) koster i gennemsnit: <strong>[medium size average price] kr</strong>',
+     'large size average price' => 'Et stort depotrum (mellem 18 og 25 m²) koster i gennemsnit: <strong>[large size average price] kr</strong>',
+     'very large size average price' => 'Et meget stort depotrum (over 25 m²) koster i gennemsnit: <strong>[very large size average price] kr</strong>',
+     );
 
-           <p>Den gennemsnitlige pris for et depotrum er: <strong>[average price] kr</strong></p>
+           
 
-           <p>Den gennemsnitlige pris pr. kvadratmeter for et depotrum er: <strong>[average m2 price] kr/m²</strong></p>
-
-           <p>Den gennemsnitlige pris pr. kubikmeter for et depotrum er: <strong>[average m3 price] kr/m³</strong></p>
-
-           <h4>Priser på ledige depotrum i [location]</h4>
-
-           <p>Et mini depotrum (op til 2 m²) koster i gennemsnit: <strong>[mini size average price] kr</strong></p>
-
-           <p>Et lille depotrum (mellem 2 og 7 m²) i gennemsnit: <strong>[small size average price] kr</strong></p>
-
-           <p>Et mellem depotrum (mellem 7 og 18 m²) i gennemsnit: <strong>[medium size average price]kr</strong></p>
-
-           <p>Et stort depotrum (mellem 18 og 25 m²) i gennemsnit: <strong>[large size average price]kr</strong></p>
-
-           <p>Et meget stort depotrum (over 25 m²) i gennemsnit: <strong>[very large size average price] kr</strong></p>';
 

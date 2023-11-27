@@ -63,7 +63,7 @@ function get_statistics_data_for_list_of_gd_places($gd_place_ids_list)
     // Calculate averages
     foreach ($statistics_data as $field => $value) {
         if (strpos($field, 'average') !== false) {
-            $statistics_data[$field] = $value / $counter;
+            round($statistics_data[$field] = $value / $counter,2);
         }
     }
 
@@ -75,7 +75,7 @@ function add_fields($field,$value,$statistics_data)
     if (isset($statistics_data[$field])) {
         return $statistics_data[$field] += $value;
     } else {
-        return $statistics_data[$field] = $value;
+        return  $value;
     }
 }
 
