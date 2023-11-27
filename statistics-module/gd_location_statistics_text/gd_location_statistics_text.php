@@ -26,7 +26,7 @@ function gd_location_statistics_text_func($atts) {
      $gd_place_names = get_post_meta($gd_location_id, 'gd_place_names', true);
 
      if (!empty($gd_place_names)) {
-          $fulltext .= '<h5>Der er i alt [num of gd_places] udbydere af depotrum i [location]</h5>';
+          $fulltext .= '<h5>Der er i alt [num of gd_places] udbydere af depotrum i [location]:</h5>';
           $fulltext .= '<ul>';
           foreach ($gd_place_names as $place_name) {
                $fulltext .= '<li>' . $place_name . '</li>';
@@ -40,7 +40,7 @@ function gd_location_statistics_text_func($atts) {
 
      foreach ($statistics_data_fields as $field) {
           $value = get_post_meta($gd_location_id, $field, true);
-          $fulltext = str_replace("[$field]", $value, $fulltext);
+          $fulltext = str_replace("[$field]", round($value,2), $fulltext);
      }
 
 
@@ -49,17 +49,17 @@ function gd_location_statistics_text_func($atts) {
 
      add_shortcode('gd_location_statistics_text_shortcode', 'gd_location_statistics_text_func');
 
-     $fulltext = '<h3>Statistik over ledige depotrum i [location]</h3>
+     $fulltext = '<h3>Statistik over ledige depotrum i [location]:</h3>
 
-           <p>Der er <strong>[num of gd_places] udbydere af depotrum</strong> i [location], og der er lige nu ledige depotrum fra <strong>[smallest size] m² op til [largest size] m²</strong></p>
+           <p>Der er er lige nu ledige depotrum fra <strong>[smallest size] m² op til [largest size] m²</strong> i [location]</p>
 
            <h4>Hvad koster et ledigt depotrum i [location]?</h4>
 
-           <p>Den gennemsnitlige pris for et depotrum i [location] er: <strong>[average price] kr</strong></p>
+           <p>Den gennemsnitlige pris for et depotrum er: <strong>[average price] kr</strong></p>
 
-           <p>Den gennemsnitlige pris pr. kvadratmeter for et depotrum i [location] er: <strong>[average m2 price] kr/m²</strong></p>
+           <p>Den gennemsnitlige pris pr. kvadratmeter for et depotrum er: <strong>[average m2 price] kr/m²</strong></p>
 
-           <p>Den gennemsnitlige pris pr. kubikmeter for et depotrum i [location] er: <strong>[average m3 price] kr/m³</strong></p>
+           <p>Den gennemsnitlige pris pr. kubikmeter for et depotrum er: <strong>[average m3 price] kr/m³</strong></p>
 
            <h4>Priser på ledige depotrum i [location]</h4>
 
