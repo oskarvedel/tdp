@@ -22,6 +22,8 @@ function gd_location_statistics_text_func($atts) {
           $value = get_post_meta($gd_location_id, $label, true);
           if (!empty($value)) { 
                $text_template = str_replace("[$label]", '<p>' . $text . '</p>', $text_template);
+          } else {
+               $text_template = str_replace("[$label]", '', $text_template);
           }
      }
 
