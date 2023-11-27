@@ -21,7 +21,7 @@ function gd_location_statistics_text_func($atts) {
      foreach ($statistics_data_fields_texts as $label => $text) {
           $value = get_post_meta($gd_location_id, $label, true);
           if (!empty($value)) { 
-               $text_template = str_replace("[$label]", '<p>' . $text . '</p>', $text_template);
+               $text_template = str_replace("[$label]", $text , $text_template);
           } else {
                $text_template = str_replace("[$label]", '', $text_template);
           }
@@ -36,7 +36,7 @@ function gd_location_statistics_text_func($atts) {
           $text_template .= '<h5>Der er i alt [num of gd_places] udbydere af depotrum i [location]:</h5>';
           $text_template .= '<ul>';
           foreach ($gd_place_names as $place_name) {
-               $text_template .= '<li>' . $place_name . '</li>';
+               $text_template .= '<li><small>' . $place_name . '</small></li>';
           }
           $text_template .= '</ul>';
      }
@@ -61,31 +61,32 @@ function gd_location_statistics_text_func($atts) {
 
      add_shortcode('gd_location_statistics_text_shortcode', 'gd_location_statistics_text_func');
 
-     $text_template = '<h3>Statistik over ledige depotrum i [location]:</h3>
-          <h4>Hvad koster et ledigt depotrum i [location]?</h4>
-          [average price]
+     $text_template = '<h4>Statistik over ledige depotrum i [location]</h4>
+     <p><small>Vi har indsamlet data om depotrum i hele Danmark, og derfor kan vi oplyse dig om hvad opbevaring koster i [location].</small></p>
+          <h5>Hvad koster et ledigt depotrum i [location]?</h5>
+          <p>[average price]
           [smallest size]
           [average m2 price]
           [average m3 price]
           <h4>Priser på ledige depotrum i [location]</h4>
-          [mini size average price]
+          <p>[mini size average price]
           [small size average price]
           [medium size average price]
           [large size average price]
-          [very large size average price]
+          [very large size average price]</p>
            ';
 
 
      $statistics_data_fields_texts = array(
-     'average price' => 'Den gennemsnitlige pris for et depotrum er: <strong>[average price] kr</strong>',
-     'smallest size' => 'Der er er lige nu ledige depotrum fra <strong>[smallest size] m² op til [largest size] m²</strong> i [location]',
-     'average m2 price' => 'Den gennemsnitlige pris pr. kvadratmeter for et depotrum er: <strong>[average m2 price] kr/m²</strong>',
-     'average m3 price' => 'Den gennemsnitlige pris pr. kubikmeter for et depotrum er: <strong>[average m3 price] kr/m³</strong>',
-     'mini size average price' =>  'Et mini depotrum (op til 2 m²) koster i gennemsnit: <strong>[mini size average price] kr</strong>',
-     'small size average price' => 'Et lille depotrum (mellem 2 og 7 m²) koster i gennemsnit: <strong>[small size average price] kr</strong>',
-     'medium size average price' =>  'Et mellem depotrum (mellem 7 og 18 m²) koster i gennemsnit: <strong>[medium size average price] kr</strong>',
-     'large size average price' => 'Et stort depotrum (mellem 18 og 25 m²) koster i gennemsnit: <strong>[large size average price] kr</strong>',
-     'very large size average price' => 'Et meget stort depotrum (over 25 m²) koster i gennemsnit: <strong>[very large size average price] kr</strong>',
+     'average price' => 'Den gennemsnitlige pris for et ledigt depotrum i [location] er <strong>[average price] kr. </strong>',
+     'smallest size' => 'Der er er lige nu ledige depotrum fra <strong>[smallest size] m² op til [largest size] m².</strong>',
+     'average m2 price' => 'Kvadratmeterprisen er i gennemsnit <strong>[average m2 price] kr/m²,</strong>  og ',
+     'average m3 price' => 'kubikmeterprisen er i gennemsnit <strong>[average m3 price] kr/m³.</strong>',
+     'mini size average price' =>  'Et mini depotrum (op til 2 m²) koster i gennemsnit: <strong>[mini size average price] kr. </strong>',
+     'small size average price' => 'Et lille depotrum (mellem 2 og 7 m²) koster i gennemsnit: <strong>[small size average price] kr. </strong>',
+     'medium size average price' =>  'Et mellem depotrum (mellem 7 og 18 m²) koster i gennemsnit: <strong>[medium size average price] kr. </strong>',
+     'large size average price' => 'Et stort depotrum (mellem 18 og 25 m²) koster i gennemsnit: <strong>[large size average price] kr. </strong>',
+     'very large size average price' => 'Et meget stort depotrum (over 25 m²) koster i gennemsnit: <strong>[very large size average price] kr. </strong>',
      );
 
            
