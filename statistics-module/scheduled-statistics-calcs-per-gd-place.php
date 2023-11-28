@@ -157,6 +157,21 @@ function find_average_price($depotrum_data, $min, $max, $m2_or_m3)
     }
 }
 
+function find_lowest_or_highest_price($depotrum_data, $lowest_or_highest)
+{
+    $return_value = null;
+
+    // Loop through each item in $depotrum_data
+    foreach ($depotrum_data as $depotrum_data_item) {
+        // Check if the mprice is lower or highers than the current set price
+        if ($return_value === null || ($lowest_or_highest === 'lowest' && $depotrum_data_item['price'] < $return_value) || ($lowest_or_highest === 'highest' && $depotrum_data_item['price'] > $return_value)) {
+            $return_value = $depotrum_data_item['price'];
+        }
+    }
+
+    return $return_value;
+}
+
 function update_statistics_data_for_all_gd_places()
 {
     $gd_places = get_posts(array('post_type' => 'gd_place', 'posts_per_page' => -1));
@@ -169,8 +184,11 @@ function update_statistics_data_for_all_gd_places()
             update_post_meta($gd_place->ID, 'num of m2 available', find_num_of_m2_or_m3_available($depotrum_data, 'm2'));
             update_post_meta($gd_place->ID, 'num of m3 available', find_num_of_m2_or_m3_available($depotrum_data, 'm3'));
 
-            update_post_meta($gd_place->ID, 'smallest size', find_smallest_or_largest_m2_size($depotrum_data,'smallest'));
-            update_post_meta($gd_place->ID, 'largest size', find_smallest_or_largest_m2_size($depotrum_data,'largest'));
+            update_post_meta($gd_place->ID, 'smallest m2 size', find_smallest_or_largest_m2_size($depotrum_data,'smallest'));
+            update_post_meta($gd_place->ID, 'largest m2 size', find_smallest_or_largest_m2_size($depotrum_data,'largest'));
+
+            update_post_meta($gd_place->ID, 'lowest price', find_lowest_or_highest_price($depotrum_data,'lowest'));
+            update_post_meta($gd_place->ID, 'highest price', find_lowest_or_highest_price($depotrum_data,'highest'));
 
             update_post_meta($gd_place->ID, 'average price', find_average_price($depotrum_data, 0, 1000, ''));
             update_post_meta($gd_place->ID, 'average m2 price', find_average_price($depotrum_data, 0, 1000, 'm2'));

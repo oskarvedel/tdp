@@ -50,8 +50,11 @@ function get_statistics_data_for_list_of_gd_places($gd_place_ids_list)
             // Add depotrum data to the existing statistics data
             foreach ($statistics_data_for_single_gd_place as $field => $value) {
                 if (strpos($field, 'smallest') !== false || strpos($field, 'largest') !== false) {
-                    $statistics_data[$field] = find_smallest_or_largest_m2($field,$value,$statistics_data);
-                } else {
+                    $statistics_data[$field] = find_smallest_or_largest_m2_size_per_geolocation($field,$value,$statistics_data);
+                } else if (strpos($field, 'lowest') !== false || strpos($field, 'highest') !== false) {
+                    $statistics_data[$field] = find_lowest_or_highest_price_per_geolocation($field,$value,$statistics_data);
+                }
+                else {
                     $statistics_data[$field] = add_fields($field,$value,$statistics_data);
                 //trigger_error("updarting non-smallestorlargest field: " . $field . " value: " . $value, E_USER_WARNING);
                 }
@@ -80,13 +83,26 @@ function add_fields($field,$value,$statistics_data)
 }
 
 
-function find_smallest_or_largest_m2($field,$value,$statistics_data)
+function find_smallest_or_largest_m2_size_per_geolocation($field,$value,$statistics_data)
 {
     if (!isset($statistics_data[$field])) {
         return $value;
     }
 
     if ( (strpos($field, 'smallest') && $value < $statistics_data[$field]) || (strpos($field, 'largest') && $value > $statistics_data[$field])) {
+        return $value;
+    } else {
+        return $statistics_data[$field];
+    }
+}
+
+function find_lowest_or_highest_price_per_geolocation($field,$value,$statistics_data)
+{
+    if (!isset($statistics_data[$field])) {
+        return $value;
+    }
+
+    if ( (strpos($field, 'lowest') && $value < $statistics_data[$field]) || (strpos($field, 'highest') && $value > $statistics_data[$field])) {
         return $value;
     } else {
         return $statistics_data[$field];

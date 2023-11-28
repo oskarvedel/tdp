@@ -61,14 +61,14 @@ function gd_location_statistics_text_func($atts) {
 
      add_shortcode('gd_location_statistics_text_shortcode', 'gd_location_statistics_text_func');
 
-     $text_template = '<h4>Statistik over ledige depotrum i [location]</h4>
+     $text_template = '<h2>Priser på depotrum i [location]</h2>
      <p><small>Vi har indsamlet data om depotrum i hele Danmark, og derfor kan vi oplyse dig om hvad opbevaring koster i [location].</small></p>
-          <h5>Hvad koster et ledigt depotrum i [location]?</h5>
           <p>[average price]
-          [smallest size]
+          [smallest m2 size]
+          [lowest price]
           [average m2 price]
-          [average m3 price]
-          <h4>Priser på ledige depotrum i [location]</h4>
+          [average m3 price]</p>
+          <h3>Priser på detotrum i [location] fordelt efter størrelse</h3>
           <p>[mini size average price]
           [small size average price]
           [medium size average price]
@@ -78,8 +78,9 @@ function gd_location_statistics_text_func($atts) {
 
 
      $statistics_data_fields_texts = array(
-     'average price' => 'Den gennemsnitlige pris for et ledigt depotrum i [location] er <strong>[average price] kr. </strong>',
-     'smallest size' => 'Der er er lige nu ledige depotrum fra <strong>[smallest size] m² op til [largest size] m².</strong>',
+     'average price' => 'Den gennemsnitlige pris for et ledigt depotrum i [location] er <strong>[average price] kr.</strong>',
+     'smallest m2 size' => 'Der er er lige nu ledige depotrum fra <strong>[smallest m2 size] m² op til [largest m2 size] m², </strong>',
+     'lowest price' => 'og prisen er mellem <strong>[lowest price] kr og [highest price] kr.</strong>',
      'average m2 price' => 'Kvadratmeterprisen er i gennemsnit <strong>[average m2 price] kr/m²,</strong>  og ',
      'average m3 price' => 'kubikmeterprisen er i gennemsnit <strong>[average m3 price] kr/m³.</strong>',
      'mini size average price' =>  'Et mini depotrum (op til 2 m²) koster i gennemsnit: <strong>[mini size average price] kr. </strong>',
