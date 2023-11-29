@@ -157,16 +157,22 @@ function find_average_price($depotrum_data, $min, $max, $m2_or_m3)
     }
 }
 
-function find_lowest_or_highest_price($depotrum_data, $lowest_or_highest)
+function find_lowest_or_highest_price($depotrum_data, $lowest_or_highest, $min, $max,)
 {
     $return_value = null;
 
     // Loop through each item in $depotrum_data
     foreach ($depotrum_data as $depotrum_data_item) {
-        // Check if the mprice is lower or highers than the current set price
-        if ($return_value === null || ($lowest_or_highest === 'lowest' && $depotrum_data_item['price'] < $return_value) || ($lowest_or_highest === 'highest' && $depotrum_data_item['price'] > $return_value)) {
-            $return_value = $depotrum_data_item['price'];
+        // Check if the price is lower or highers than the current set price
+        if (isset($depotrum_data_item['price']))
+        {
+            if ($depotrum_data_item['m2'] >= $min && $depotrum_data_item['m2'] <= $max)
+            {
+                if ($return_value === null || ($lowest_or_highest === 'lowest' && $depotrum_data_item['price'] < $return_value) || ($lowest_or_highest === 'highest' && $depotrum_data_item['price'] > $return_value)) {
+                    $return_value = $depotrum_data_item['price'];
+                }
         }
+         }
     }
 
     return $return_value;
@@ -187,28 +193,39 @@ function update_statistics_data_for_all_gd_places()
             update_post_meta($gd_place->ID, 'smallest m2 size', find_smallest_or_largest_m2_size($depotrum_data,'smallest'));
             update_post_meta($gd_place->ID, 'largest m2 size', find_smallest_or_largest_m2_size($depotrum_data,'largest'));
 
-            update_post_meta($gd_place->ID, 'lowest price', find_lowest_or_highest_price($depotrum_data,'lowest'));
-            update_post_meta($gd_place->ID, 'highest price', find_lowest_or_highest_price($depotrum_data,'highest'));
+            update_post_meta($gd_place->ID, 'lowest price', find_lowest_or_highest_price($depotrum_data,'lowest',0,1000));
+            update_post_meta($gd_place->ID, 'highest price', find_lowest_or_highest_price($depotrum_data,'highest',0,1000));
 
             update_post_meta($gd_place->ID, 'average price', find_average_price($depotrum_data, 0, 1000, ''));
             update_post_meta($gd_place->ID, 'average m2 price', find_average_price($depotrum_data, 0, 1000, 'm2'));
             update_post_meta($gd_place->ID, 'average m3 price', find_average_price($depotrum_data, 0, 1000, 'm3'));
 
+            update_post_meta($gd_place->ID, 'mini size lowest price', find_lowest_or_highest_price($depotrum_data,'lowest', 0, 2));
+            update_post_meta($gd_place->ID, 'mini size highest price', find_lowest_or_highest_price($depotrum_data,'highest', 0, 2));
             update_post_meta($gd_place->ID, 'mini size average price', find_average_price($depotrum_data, 0, 2, ''));
             update_post_meta($gd_place->ID, 'mini size average m2 price', find_average_price($depotrum_data, 0, 2, 'm2'));
             update_post_meta($gd_place->ID, 'mini size average m3 price', find_average_price($depotrum_data, 0, 2, 'm3'));
+
+            update_post_meta($gd_place->ID, 'small size lowest price', find_lowest_or_highest_price($depotrum_data,'lowest', 2, 7));
+            update_post_meta($gd_place->ID, 'small size highest price', find_lowest_or_highest_price($depotrum_data, 'highest', 2, 7));
             update_post_meta($gd_place->ID, 'small size average price', find_average_price($depotrum_data, 2, 7, ''));
             update_post_meta($gd_place->ID, 'small size average m2 price', find_average_price($depotrum_data, 2, 7, 'm2'));
             update_post_meta($gd_place->ID, 'small size average m3 price', find_average_price($depotrum_data, 2, 7, 'm3'));
 
+            update_post_meta($gd_place->ID, 'medium size lowest price', find_lowest_or_highest_price($depotrum_data,'lowest', 7, 18));
+            update_post_meta($gd_place->ID, 'medium size highest price', find_lowest_or_highest_price($depotrum_data, 'highest', 7, 18));
             update_post_meta($gd_place->ID, 'medium size average price', find_average_price($depotrum_data, 7, 18, ''));
             update_post_meta($gd_place->ID, 'medium size average m2 price', find_average_price($depotrum_data, 7, 18, 'm2'));
             update_post_meta($gd_place->ID, 'medium size average m3 price', find_average_price($depotrum_data, 7, 18, 'm3'));
 
+            update_post_meta($gd_place->ID, 'large size lowest price', find_lowest_or_highest_price($depotrum_data,'lowest', 18, 25));
+            update_post_meta($gd_place->ID, 'large size highest price', find_lowest_or_highest_price($depotrum_data, 'highest', 18, 25));
             update_post_meta($gd_place->ID, 'large size average price', find_average_price($depotrum_data, 18, 25, ''));
             update_post_meta($gd_place->ID, 'large size average m2 price', find_average_price($depotrum_data, 18, 25, 'm2'));
             update_post_meta($gd_place->ID, 'large size average m3 price', find_average_price($depotrum_data, 18, 25, 'm3'));
 
+            update_post_meta($gd_place->ID, 'very large size lowest price', find_lowest_or_highest_price($depotrum_data,'lowest', 25, 1000));
+            update_post_meta($gd_place->ID, 'very large size highest price', find_lowest_or_highest_price($depotrum_data, 'highest', 25, 1000));
             update_post_meta($gd_place->ID, 'very large size average price', find_average_price($depotrum_data, 25, 1000, ''));
             update_post_meta($gd_place->ID, 'very large size average m2 price', find_average_price($depotrum_data, 25, 1000, 'm2'));
             update_post_meta($gd_place->ID, 'very large size average m3 price', find_average_price($depotrum_data, 25, 1000, 'm3'));

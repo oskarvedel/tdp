@@ -53,6 +53,9 @@ function get_statistics_data_for_list_of_gd_places($gd_place_ids_list)
                     $statistics_data[$field] = find_smallest_or_largest_m2_size_per_geolocation($field,$value,$statistics_data);
                 } else if (strpos($field, 'lowest') !== false || strpos($field, 'highest') !== false) {
                     $statistics_data[$field] = find_lowest_or_highest_price_per_geolocation($field,$value,$statistics_data);
+                    if (strpos($field, 'lowest')  !== false) {
+                    //trigger_error("updating lowest price field: " . $field . " with value: " . $value, E_USER_WARNING);
+                    }
                 }
                 else {
                     $statistics_data[$field] = add_fields($field,$value,$statistics_data);
@@ -82,7 +85,6 @@ function add_fields($field,$value,$statistics_data)
     }
 }
 
-
 function find_smallest_or_largest_m2_size_per_geolocation($field,$value,$statistics_data)
 {
     if (!isset($statistics_data[$field])) {
@@ -98,13 +100,16 @@ function find_smallest_or_largest_m2_size_per_geolocation($field,$value,$statist
 
 function find_lowest_or_highest_price_per_geolocation($field,$value,$statistics_data)
 {
+    //trigger_error("field: " . $field . " value: " . $value, E_USER_WARNING);
     if (!isset($statistics_data[$field])) {
         return $value;
     }
 
-    if ( (strpos($field, 'lowest') && $value < $statistics_data[$field]) || (strpos($field, 'highest') && $value > $statistics_data[$field])) {
+    if ((strpos($field, 'lowest') && $value < $statistics_data[$field]) || (strpos($field, 'highest') && $value > $statistics_data[$field])) {
+        //trigger_error("field: " . $field . " value: " . $value ."higher or lower than " . $statistics_data[$field] . " returning value", E_USER_WARNING);
         return $value;
     } else {
+        //trigger_error("field: " . $field . " value: " . $value ."NOT higher or lower than " . $statistics_data[$field] . " returning original field", E_USER_WARNING);
         return $statistics_data[$field];
     }
 }
@@ -185,9 +190,13 @@ function update_statistics_data_for_all_geolocations()
             $gd_place_list = get_post_meta($geolocation_id, 'gd_place_list', false);
             
             $depotrum_data = get_statistics_data_for_list_of_gd_places($gd_place_list);
+            //trigger_error("depotrum_data var_dump:" . var_dump($depotrum_data), E_USER_WARNING);
             foreach ($depotrum_data as $field => $value) {
                 update_post_meta($geolocation_id, $field, $value);
-                //trigger_error("updating field: " . $field . " with value: " . $value, E_USER_WARNING);
+                if (strpos($field, 'lowest')  !== false) {
+                    trigger_error("updating lowest price field: " . $field . " with value: " . $value .  "for geolocation "  . $geolocation->post_name, E_USER_WARNING);
+                    }
+                //trigger_error("updated field: " . $field . " with value: " . $value . "for geolocation" . $geolocation->post_name , E_USER_WARNING);
             }
     }  
 }
