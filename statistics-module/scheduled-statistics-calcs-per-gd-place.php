@@ -157,7 +157,7 @@ function find_average_price($depotrum_data, $min, $max, $m2_or_m3)
     }
 }
 
-function find_lowest_or_highest_price($depotrum_data, $lowest_or_highest, $min, $max,)
+function find_lowest_or_highest_price($depotrum_data, $lowest_or_highest, $min, $max)
 {
     $return_value = null;
 
