@@ -54,15 +54,6 @@ function custom_depotrum_list_shortcode()
                         $output .= '<span class="m2label"> m2</span>';
                         $output .= '</div>';
 
-                        $output .= '<div class="price-column vertical-center">';
-                        if (get_post_meta($id, 'price', true)) {
-                            $output .= '<span class="price">' . round(get_post_meta($id, 'price', true),2) . ' kr.</span>';
-                            //$output .= '<span class="month">/måned</span>';
-                        } else {
-                            $output .= '<span class="month">Pris ukendt</span>';
-                        }
-                        $output .= '</div>';
-
                         /*$output .= '<div class="placement-column vertical-center">';
                         $placement = get_post_meta($relTypeId, 'placement', true);
 
@@ -92,6 +83,15 @@ function custom_depotrum_list_shortcode()
                             $output .= '</div>';
                         }
                         $output .= '</div>';*/
+                        $output .= '</div>';
+
+                        $output .= '<div class="price-column vertical-center">';
+                        if (get_post_meta($id, 'price', true)) {
+                            $output .= '<span class="price">' . round(get_post_meta($id, 'price', true),2) . ' kr.</span>';
+                            //$output .= '<span class="month">/måned</span>';
+                        } else {
+                            $output .= '<span class="month">Pris ukendt</span>';
+                        }
                         $output .= '</div>';
 
                         $output .= '<div class="navigation-column vertical-center">';
