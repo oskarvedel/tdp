@@ -60,11 +60,11 @@ function gd_location_statistics_text_func($atts) {
      function generate_selfstorage_provider_list($gd_place_names){
           if (!empty($gd_place_names)) {
                $return_text = '<h4>Der er i alt [num of gd_places] udbydere af depotrum i [location]:</h4>';
-               $return_text .= '<ul>';
+               $return_text .= '<p class="three-columns"><small>';
                foreach ($gd_place_names as $place_name) {
-                    $return_text .= '<li><small>' . $place_name . '</small></li>';
+                    $return_text .=  $place_name  . '<br>';
                }
-               $return_text .= '</ul>';
+               $return_text .= '</small></ul>';
                return $return_text;
           }
      }
@@ -83,7 +83,7 @@ function gd_location_statistics_text_func($atts) {
                <table>
                <thead>
                <tr>
-               <th class="right-align"><strong>Størrelse</strong></left-align></th>
+               <th class="left-align"><strong>Størrelse</strong></th>
                <th class="right-align"><strong>Laveste pris</strong></th>
                <th class="right-align"><strong>Gennemsnitpris</strong></th>
                <th class="right-align"><strong>Højeste pris</strong></th>
