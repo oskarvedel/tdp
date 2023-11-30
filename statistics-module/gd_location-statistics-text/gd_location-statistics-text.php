@@ -35,6 +35,8 @@ function gd_location_statistics_text_func($atts)
      $output .= $second_paragraph;
      $output .= $price_table;
      $output .= $third_paragraph;
+     echo "test";
+     echo var_dump($schools);
      $output .= generate_schools_paragraph($schools);
      $output .= generate_selfstorage_provider_list($gd_place_names);
 
