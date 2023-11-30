@@ -50,16 +50,15 @@ function get_statistics_data_for_list_of_gd_places($gd_place_ids_list)
             // Add depotrum data to the existing statistics data
             foreach ($statistics_data_for_single_gd_place as $field => $value) {
                 if (strpos($field, 'smallest') !== false || strpos($field, 'largest') !== false) {
-                    $statistics_data[$field] = find_smallest_or_largest_m2_size_per_geolocation($field,$value,$statistics_data);
+                    $statistics_data[$field] = find_smallest_or_largest_m2_size_per_geolocation($field, $value, $statistics_data);
                 } else if (strpos($field, 'lowest') !== false || strpos($field, 'highest') !== false) {
-                    $statistics_data[$field] = find_lowest_or_highest_price_per_geolocation($field,$value,$statistics_data);
+                    $statistics_data[$field] = find_lowest_or_highest_price_per_geolocation($field, $value, $statistics_data);
                     if (strpos($field, 'lowest')  !== false) {
-                    //trigger_error("updating lowest price field: " . $field . " with value: " . $value, E_USER_WARNING);
+                        //trigger_error("updating lowest price field: " . $field . " with value: " . $value, E_USER_WARNING);
                     }
-                }
-                else {
-                    $statistics_data[$field] = add_fields($field,$value,$statistics_data);
-                //trigger_error("updarting non-smallestorlargest field: " . $field . " value: " . $value, E_USER_WARNING);
+                } else {
+                    $statistics_data[$field] = add_fields($field, $value, $statistics_data);
+                    //trigger_error("updarting non-smallestorlargest field: " . $field . " value: " . $value, E_USER_WARNING);
                 }
             }
             $counter++;
@@ -69,14 +68,14 @@ function get_statistics_data_for_list_of_gd_places($gd_place_ids_list)
     // Calculate averages
     foreach ($statistics_data as $field => $value) {
         if (strpos($field, 'average') !== false) {
-            round($statistics_data[$field] = $value / $counter,2);
+            round($statistics_data[$field] = $value / $counter, 2);
         }
     }
 
     return $statistics_data;
 }
 
-function add_fields($field,$value,$statistics_data)
+function add_fields($field, $value, $statistics_data)
 {
     if (isset($statistics_data[$field])) {
         return $statistics_data[$field] += $value;
@@ -85,20 +84,20 @@ function add_fields($field,$value,$statistics_data)
     }
 }
 
-function find_smallest_or_largest_m2_size_per_geolocation($field,$value,$statistics_data)
+function find_smallest_or_largest_m2_size_per_geolocation($field, $value, $statistics_data)
 {
     if (!isset($statistics_data[$field])) {
         return $value;
     }
 
-    if ( (strpos($field, 'smallest') && $value < $statistics_data[$field]) || (strpos($field, 'largest') && $value > $statistics_data[$field])) {
+    if ((strpos($field, 'smallest') && $value < $statistics_data[$field]) || (strpos($field, 'largest') && $value > $statistics_data[$field])) {
         return $value;
     } else {
         return $statistics_data[$field];
     }
 }
 
-function find_lowest_or_highest_price_per_geolocation($field,$value,$statistics_data)
+function find_lowest_or_highest_price_per_geolocation($field, $value, $statistics_data)
 {
     //trigger_error("field: " . $field . " value: " . $value, E_USER_WARNING);
     if (!isset($statistics_data[$field])) {
@@ -118,7 +117,7 @@ function find_lowest_or_highest_price_per_geolocation($field,$value,$statistics_
 function get_statistics_data_for_single_gd_place($gd_place_id)
 {
     global $statistics_data_fields;
-    
+
     $return_array = [];
 
     foreach ($statistics_data_fields as $field) {
@@ -181,24 +180,22 @@ add_shortcode("update_gd_place_list_for_geolocation", "update_gd_place_list_for_
 
 function update_statistics_data_for_all_geolocations()
 {
-        $geolocations = get_posts(array('post_type' => 'geolocations', 'posts_per_page' => -1));
+    $geolocations = get_posts(array('post_type' => 'geolocations', 'posts_per_page' => -1));
 
-        foreach ($geolocations as $geolocation) {
-            $geolocation_id = $geolocation->ID;
-            //trigger_error("updating data for geolocation: " . $geolocation->post_name, E_USER_WARNING);
+    foreach ($geolocations as $geolocation) {
+        $geolocation_id = $geolocation->ID;
+        //trigger_error("updating data for geolocation: " . $geolocation->post_name, E_USER_WARNING);
 
-            $gd_place_list = get_post_meta($geolocation_id, 'gd_place_list', false);
-            
-            $depotrum_data = get_statistics_data_for_list_of_gd_places($gd_place_list);
-            //trigger_error("depotrum_data var_dump:" . var_dump($depotrum_data), E_USER_WARNING);
-            foreach ($depotrum_data as $field => $value) {
-                update_post_meta($geolocation_id, $field, $value);
-                if (strpos($field, 'lowest')  !== false) {
-                    trigger_error("updating lowest price field: " . $field . " with value: " . $value .  "for geolocation "  . $geolocation->post_name, E_USER_WARNING);
-                    }
-                //trigger_error("updated field: " . $field . " with value: " . $value . "for geolocation" . $geolocation->post_name , E_USER_WARNING);
+        $gd_place_list = get_post_meta($geolocation_id, 'gd_place_list', false);
+
+        $depotrum_data = get_statistics_data_for_list_of_gd_places($gd_place_list);
+        //trigger_error("depotrum_data var_dump:" . var_dump($depotrum_data), E_USER_WARNING);
+        foreach ($depotrum_data as $field => $value) {
+            update_post_meta($geolocation_id, $field, $value);
+            if (strpos($field, 'lowest')  !== false) {
+                trigger_error("updating lowest price field: " . $field . " with value: " . $value .  "for geolocation "  . $geolocation->post_name, E_USER_WARNING);
             }
-    }  
+            //trigger_error("updated field: " . $field . " with value: " . $value . "for geolocation" . $geolocation->post_name , E_USER_WARNING);
+        }
+    }
 }
-
-?>

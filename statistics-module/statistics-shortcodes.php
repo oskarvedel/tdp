@@ -2,7 +2,8 @@
 
 require_once dirname(__FILE__) . '/statistics-common.php';
 
-function gd_location_metadata_shortcode_func($atts) {
+function gd_location_metadata_shortcode_func($atts)
+{
      extract(shortcode_atts(array(
           'post_id' => NULL,
      ), $atts));
@@ -19,5 +20,3 @@ function gd_location_metadata_shortcode_func($atts) {
 }
 
 add_shortcode('gd_location_statistics_field_shortcode', 'gd_location_metadata_shortcode_func');
-
-?>

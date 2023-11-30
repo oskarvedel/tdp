@@ -1,16 +1,26 @@
 <?php
 
-function gd_location_statistics_text_func($atts)
+function geolocation_statistics_text_func($atts)
 {
+
      //get data
-     $gd_location_id = extract_geolocation_id_via_url();
+     $current_pod = pods();
+     $geolocation_id = get_the_ID();
 
-     $num_of_gd_places = get_post_meta($gd_location_id, 'num of gd_places', true);
+     $gd_places = $current_pod->field("gd_place_list");
 
-     $archive_title_trimmed =
+     $num_of_gd_places = count($gd_places);
+     //$num_of_gd_places = get_post_meta($geolocation_id, 'num of gd_places', true);
 
-          $gd_place_names = get_post_meta($gd_location_id, 'gd_place_names', true);
+     $post_title = get_the_title();
 
+     //$gd_place_names = get_post_meta($geolocation_id, 'gd_place_names', true);
+
+     //get the names of the gd_places
+     $gd_place_names = [];
+     foreach ($gd_places as $gd_place) {
+          $gd_place_names[] = get_the_title($gd_place['ID']);
+     }
 
      //return if not enough data
      if ($num_of_gd_places <= 2) {
@@ -39,10 +49,10 @@ function gd_location_statistics_text_func($atts)
      //relace variable placeholders with data
      $output = str_replace("[num of gd_places]", $num_of_gd_places, $output);
 
-     $output = str_replace("[location]", $archive_title_trimmed, $output);
+     $output = str_replace("[location]", $post_title, $output);
 
      foreach ($statistics_data_fields as $field) {
-          $value = get_post_meta($gd_location_id, $field, true);
+          $value = get_post_meta($geolocation_id, $field, true);
           if (!empty($value)) {
                $rounded = floatval(round($value, 2));
                $numberformat = number_format($value, 0, ',', '.');
@@ -55,7 +65,7 @@ function gd_location_statistics_text_func($atts)
      echo $output;
 }
 
-add_shortcode('gd_location_statistics_text_shortcode', 'gd_location_statistics_text_func');
+add_shortcode('geolocation_statistics_text_shortcode', 'geolocation_statistics_text_func');
 
 function generate_selfstorage_provider_list($gd_place_names)
 {

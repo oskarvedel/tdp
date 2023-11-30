@@ -1,27 +1,5 @@
 <?php
 
-function sort_depotrum_by_price($depotrum_items)
-{
-    // Get all depotrum and sort by price
-    $AllDepotrumArray = [];
-
-    foreach ($depotrum_items as $depotrum) {
-        $id = $depotrum['ID'];
-        $arrayObject = (object) [
-            'id' => $id,
-            'price' => get_post_meta($id, 'price', true),
-        ];
-
-        array_push($AllDepotrumArray, $arrayObject);
-    }
-
-    usort($AllDepotrumArray, function ($a, $b) {
-        return $a->price > $b->price ? 1 : -1;
-    });
-
-    return $AllDepotrumArray;
-}
-
 // Define the shortcode and the function to execute when the shortcode is used.
 function custom_depotrum_list_shortcode()
 {
@@ -29,9 +7,10 @@ function custom_depotrum_list_shortcode()
 
     // Check if the Pod object exists and the field "partner" is set
     if ($current_pod && $current_pod->exists()) {
-        $depotrum_items = $current_pod->field("depotrum");
-        $lokationId = $current_pod->field("id");
+        $gd_place_items = $current_pod->field("gd_place_list");
+        $lokationId = get_the_ID();
         $hide_units = $current_pod->field("hide_units");
+        echo do_shortcode('[elementor-template id="819"]');
 
         if ($depotrum_items && !empty($depotrum_items) && !$hide_units) {
             $IdsSortedByPrice = sort_depotrum_by_price($depotrum_items);

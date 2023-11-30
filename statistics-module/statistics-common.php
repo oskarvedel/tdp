@@ -47,29 +47,30 @@ $statistics_data_fields = array(
  *
  * @return string The geolocation slug extracted from the URL.
  */
-function extract_geolocation_slug_via_url() {
+function extract_geolocation_slug_via_url()
+{
 
-   // Access the global $wp object
-   global $wp;
+    // Access the global $wp object
+    global $wp;
 
-   // Get the current request URL
-   $url = home_url( $wp->request );
+    // Get the current request URL
+    $url = home_url($wp->request);
 
-   // Parse the URL to get the path
-   $parsedUrl = parse_url($url);
+    // Parse the URL to get the path
+    $parsedUrl = parse_url($url);
 
-   if (!isset($parsedUrl['path'])) {
-       return '';
-   }
+    if (!isset($parsedUrl['path'])) {
+        return '';
+    }
 
-   // Split the path into parts
-   $pathParts = explode('/', trim($parsedUrl['path'], '/'));
+    // Split the path into parts
+    $pathParts = explode('/', trim($parsedUrl['path'], '/'));
 
-   // Get the last part of the path as the slug
-   $slug = end($pathParts);
+    // Get the last part of the path as the slug
+    $slug = end($pathParts);
 
-   // Return the slug
-   return $slug;
+    // Return the slug
+    return $slug;
 }
 
 /**
@@ -82,23 +83,23 @@ function extract_geolocation_slug_via_url() {
  *
  * @return int|null The geolocation ID if found, null otherwise.
  */
-function extract_geolocation_id_via_url() {
+function extract_geolocation_id_via_url()
+{
 
     // Get the geolocation slug from the URL
     $slug = extract_geolocation_slug_via_url();
 
     // Use the Pods plugin to get the geolocation object associated with the slug
-    $slug_test = pods( 'geolocations', $slug );
+    $slug_test = pods('geolocations', $slug);
 
     // Initialize the geolocation ID as null
     $geolocation_id = null;
 
     // If the geolocation object exists, extract its ID
-    if ($slug_test && $slug_test->exists() ) {
+    if ($slug_test && $slug_test->exists()) {
         $geolocation_id = $slug_test->field('ID');
     }
 
     // Return the geolocation ID
     return $geolocation_id;
 }
-?>
