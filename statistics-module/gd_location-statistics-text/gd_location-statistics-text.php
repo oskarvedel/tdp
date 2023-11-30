@@ -11,7 +11,6 @@ function gd_location_statistics_text_func($atts)
 
      $gd_place_names = get_post_meta($gd_location_id, 'gd_place_names', true);
 
-
      //return if not enough data
      if ($num_of_gd_places <= 2) {
           echo (get_post_meta($gd_location_id, 'description', true));

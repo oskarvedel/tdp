@@ -79,14 +79,6 @@ function generate_selfstorage_provider_list_geolocation_duplicate($gd_place_name
      }
 }
 
-$first_paragraph = '<h2>Hvad koster et depotrum i [location]?</h2>
-     <p class="three-columns">Du kan opbevare ejendele i et depotrum i [location] for i gennemsnit [average price] kr pr. måned. Her på tjekdepot kan du finde ledige depotrum med et bredt udvalg af egenskaber og fordele, herunder klimakontrol, personlig betjening, døgnalarm, videoovervågning, direkte adgang med bil med flere. For at reservere et opbevaringsrum i [location] kan du her på siden nemt få et overblik over ledige depotrum og vælge et rum med den rette størrelse og de nødvendige egenskaber.</p>
-     <p class="three-columns">Afhængigt af dine behov kan du nemt finde det rigtige depotrum i [location]. Vi har et væld af muligheder for dig at vælge imellem. Du kan vælge et mindre lagerrum og derefter se, hvor meget du har brug for at opbevare, eller du kan vælge et større depotrum for at få al den plads, du har brug for til alle slags ejendele, selv motorcykler og biler. I [location] starter priserne for et depotrum ved [lowest price] kr og går op til [highest price] kr, afhængigt af rummets størrelse og egenskaber.</three-columns></p>';
-
-$second_paragraph = '<h2>Find opbevaring i [location]</h2>
-     <p class="three-columns">Hvis du leder efter opbevaring i [location], er du kommet til det rette sted. Her på tjekdepot har vi registreret [num of gd_places] udbydere af opbevaring placeret i [location], og de tilbyder alle sikre og tilgængelige depotrum. Du kan sortere alle depotrum i dit område efter pris, størrelse og egenskaber. Her kan du også finde mere information om de forskellige egenskaber ved et depotrum såsom klimakontrol, adgangsforhold og sikkerhedsforanstaltninger. Se vores opslag i [location], vælg et depotrum, der passer til dine behov, og lej den med det samme.</p>
-     <p class="three-columns">Når du reserverer opbevaring, har du et rigtig godt sted at placere dine ting, både på lang og kort sigt. Langt de fleste opbevaringsrum udlejes på månedsbasis, hvilket betyder, at du har mulighed for at flytte ind og ud når som helst. Du kan leje opbevaring i [location] i en måned eller et helt år - uanset hvad, kan du forlænge din lejeperiode og skifte til et depotrum på en anden størrelse, når du ønsker det. På denne måde er det nemt at vælge den bedste opbevaring til dine ejendele!</p>';
-
 function generate_price_table_geolocation_duplicate()
 {
      $price_table = '
@@ -135,34 +127,3 @@ function generate_price_table_geolocation_duplicate()
 
      return $price_table;
 }
-
-$third_paragraph = '<h2>Hvordan finder jeg et sted at opmagasinere mine ting?</h2>
-     <p class="three-columns">Hvis du leder efter et sikkert sted at opbevare mindre brugte genstande og personlige ejendele af alle typer og størrelser, er det oplagt at bruge opmagasinering, depotrum eller et opbevaringsrum tæt på dit hjem eller din virksomhed, så du har adgang til dine ting når som helst uden besvær. Her på tjekdepot får du et overblik over priser på opmagasinering og opbevaring og over rumstørrelser, egenskaber og fordele afhængigt af dine behov og dit budget. Du kan nemt finde opmagasinering i dit nabolag eller din by, uanset hvor du befinder dig i Danmark. Du er kun én søgning væk fra at finde det rigtige sted til dine ejendele i [lokation].</p>';
-
-$text_template = '
-          <p>[average price]
-          [smallest m2 size]
-          [lowest price]
-          [average m2 price]
-          [average m3 price]</p>
-          <h3>Priser på depotrum i [location] fordelt efter størrelse</h3>
-          <p>[mini size average price]
-          [small size average price]
-          [medium size average price]
-          [large size average price]
-          [very large size average price]</p>
-           ';
-
-
-$statistics_data_fields_texts = array(
-     'average price' => 'Den gennemsnitlige pris for et ledigt depotrum i [location] er <strong>[average price] kr.</strong>',
-     'smallest m2 size' => 'Der er er lige nu ledige depotrum fra <strong>[smallest m2 size] m² op til [largest m2 size] m², </strong>',
-     'lowest price' => 'og prisen er mellem <strong>[lowest price] kr og [highest price] kr.</strong>',
-     'average m2 price' => 'Kvadratmeterprisen er i gennemsnit <strong>[average m2 price] kr/m²,</strong>  og ',
-     'average m3 price' => 'kubikmeterprisen er i gennemsnit <strong>[average m3 price] kr/m³.</strong>',
-     'mini size average price' =>  'Et mini depotrum (op til 2 m²) koster i gennemsnit: <strong>[mini size average price] kr. </strong>',
-     'small size average price' => 'Et lille depotrum (mellem 2 og 7 m²) koster i gennemsnit: <strong>[small size average price] kr. </strong>',
-     'medium size average price' =>  'Et mellem depotrum (mellem 7 og 18 m²) koster i gennemsnit: <strong>[medium size average price] kr. </strong>',
-     'large size average price' => 'Et stort depotrum (mellem 18 og 25 m²) koster i gennemsnit: <strong>[large size average price] kr. </strong>',
-     'very large size average price' => 'Et meget stort depotrum (over 25 m²) koster i gennemsnit: <strong>[very large size average price] kr. </strong>',
-);
