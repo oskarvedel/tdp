@@ -7,9 +7,9 @@ function gd_location_statistics_text_func($atts)
 
      $num_of_gd_places = get_post_meta($gd_location_id, 'num of gd_places', true);
 
-     $archive_title_trimmed =
+     $archive_title_trimmed = substr(get_the_archive_title(), 2);
 
-          $gd_place_names = get_post_meta($gd_location_id, 'gd_place_names', true);
+     $gd_place_names = get_post_meta($gd_location_id, 'gd_place_names', true);
 
 
      //return if not enough data

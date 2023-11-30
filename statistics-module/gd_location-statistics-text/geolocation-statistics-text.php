@@ -2,7 +2,6 @@
 
 function geolocation_statistics_text_func($atts)
 {
-
      //get data
      $current_pod = pods();
      $geolocation_id = get_the_ID();
@@ -67,7 +66,7 @@ function geolocation_statistics_text_func($atts)
 
 add_shortcode('geolocation_statistics_text_shortcode', 'geolocation_statistics_text_func');
 
-function generate_selfstorage_provider_list($gd_place_names)
+function generate_selfstorage_provider_list_geolocation_duplicate($gd_place_names)
 {
      if (!empty($gd_place_names)) {
           $return_text = '<h4>Der er i alt [num of gd_places] udbydere af depotrum i [location]:</h4>';
@@ -88,9 +87,8 @@ $second_paragraph = '<h2>Find opbevaring i [location]</h2>
      <p class="three-columns">Hvis du leder efter opbevaring i [location], er du kommet til det rette sted. Her på tjekdepot har vi registreret [num of gd_places] udbydere af opbevaring placeret i [location], og de tilbyder alle sikre og tilgængelige depotrum. Du kan sortere alle depotrum i dit område efter pris, størrelse og egenskaber. Her kan du også finde mere information om de forskellige egenskaber ved et depotrum såsom klimakontrol, adgangsforhold og sikkerhedsforanstaltninger. Se vores opslag i [location], vælg et depotrum, der passer til dine behov, og lej den med det samme.</p>
      <p class="three-columns">Når du reserverer opbevaring, har du et rigtig godt sted at placere dine ting, både på lang og kort sigt. Langt de fleste opbevaringsrum udlejes på månedsbasis, hvilket betyder, at du har mulighed for at flytte ind og ud når som helst. Du kan leje opbevaring i [location] i en måned eller et helt år - uanset hvad, kan du forlænge din lejeperiode og skifte til et depotrum på en anden størrelse, når du ønsker det. På denne måde er det nemt at vælge den bedste opbevaring til dine ejendele!</p>';
 
-function generate_price_table()
+function generate_price_table_geolocation_duplicate()
 {
-
      $price_table = '
                <table>
                <thead>

@@ -1,14 +1,43 @@
 <?php
 
 // Define the shortcode and the function to execute when the shortcode is used.
-function custom_depotrum_list_shortcode()
+function custom_gd_place_list_func()
 {
     $current_pod = pods();
 
+    // if ($query->have_posts()) {
+    //     while ($query->have_posts()) {
+    //         $query->the_post();
+    //         echo '<h2><a href="' . get_the_permalink() . '">' . get_the_title() . '</a></h2>';
+    //     }
+    // } else {
+    //     echo 'No posts found';
+    // }
+
+    // wp_reset_postdata();
+
+    $gd_place_items = $current_pod->field("gd_place_list");
+
+    //echo (var_dump($gd_place_items));
+
+    $ids = array_map(function ($item) {
+        return $item['ID'];
+    }, $gd_place_items);
+
+    add_action('elementor/query/my_query', function ($query) use ($ids) {
+        // Set the post IDs to the ones in $gd_place_items
+        $query->set('post__in', $ids);
+    });
+
     // Check if the Pod object exists and the field "partner" is set
-    if ($current_pod && $current_pod->exists()) {
-        $gd_place_items = $current_pod->field("gd_place_list");
-        $lokationId = get_the_ID();
+    // if ($current_pod && $current_pod->exists()) {
+    //     $gd_place_items = $current_pod->field("gd_place_list");
+    //     foreach ($gd_place_items as $gd_place) {
+    //         echo do_shortcode('[elementor-template id="819"]');
+    //         echo '<h2><a href="' . get_the_permalink() . '">' . get_the_title() . '</a></h2>';
+    //     }
+
+    /*$lokationId = get_the_ID();
         $hide_units = $current_pod->field("hide_units");
         echo do_shortcode('[elementor-template id="819"]');
 
@@ -61,7 +90,7 @@ function custom_depotrum_list_shortcode()
                             $output .= '</div>';
                         }
                         $output .= '</div>';*/
-                        $output .= '</div>';
+    /* $output .= '</div>';
 
                         $output .= '<div class="price-column vertical-center">';
                         if (get_post_meta($id, 'price', true)) {
@@ -130,9 +159,9 @@ function custom_depotrum_list_shortcode()
                 $finalOutput .= '</form>';
             }
             return $finalOutput;
-        }
-    }
+        }*/
+    // }
 }
 
 // Register the shortcode.
-add_shortcode("custom_depotrum_list", "custom_depotrum_list_shortcode");
+add_shortcode("custom_gd_place_list", "custom_gd_place_list_func");

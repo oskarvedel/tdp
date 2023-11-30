@@ -23,7 +23,7 @@ function sort_depotrum_by_price($depotrum_items)
 }
 
 // Define the shortcode and the function to execute when the shortcode is used.
-function custom_depotrum_list_shortcode()
+function custom_depotrum_list_func()
 {
     $current_pod = pods();
 
@@ -94,7 +94,7 @@ function custom_depotrum_list_shortcode()
                         $output .= '</div>';
 
                         $output .= '<div class="navigation-column vertical-center">';
-                        if ($partner && !geodir_is_page('post_type')) {
+                        if ($partner && !geodir_is_page('post_type') && !geodir_is_page('search')) {
                             $output .= do_shortcode('[gd_ninja_forms form_id="5" text="Fortsæt" post_contact="1" output="button" bg_color="#FF3369" txt_color="#ffffff" size="h5" css_class="ninja-forms-book-button"]');
                         } else {
                             $output .= '<a href="' . get_permalink($lokationId) . '">';
@@ -132,12 +132,10 @@ function custom_depotrum_list_shortcode()
 
             $counter = 0;
             foreach ($OutputArray as $arrayItem) {
-                if (++$counter >= 4) break;
+                if (geodir_is_page('post_type')  || geodir_is_page('search')) {
+                    if (++$counter >= 4) break;
+                }
                 $finalOutput .= $arrayItem;
-            }
-
-            if (geodir_is_page('post_type')) {
-                //if (++$i >= 4) break;
             }
 
             foreach ($OutputArray as $arrayItem) {
@@ -145,7 +143,7 @@ function custom_depotrum_list_shortcode()
             }
 
             $finalOutput .= "</div>";
-            if (geodir_is_page('post_type') && $partner) {
+            if ((geodir_is_page('post_type') || geodir_is_page('search')) && $partner) {
                 $finalOutput .= '<form action="' . get_permalink($lokationId) . '">';
                 $finalOutput .= '<input type="submit" class="view-all-button" value="Se alle priser" />';
                 $finalOutput .= '</form>';
@@ -156,4 +154,4 @@ function custom_depotrum_list_shortcode()
 }
 
 // Register the shortcode.
-add_shortcode("custom_depotrum_list", "custom_depotrum_list_shortcode");
+add_shortcode("custom_depotrum_list", "custom_depotrum_list_func");

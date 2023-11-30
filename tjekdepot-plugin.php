@@ -6,7 +6,8 @@
  */
 
 require_once dirname(__FILE__) . '/unit-list-module/unit-list-module.php';
-require_once dirname(__FILE__) . '/statistics-module//statistics-module.php';
+require_once dirname(__FILE__) . '/gd_place-list-module/gd_place-list-module.php';
+require_once dirname(__FILE__) . '/statistics-module/statistics-module.php';
 
 // Define the activation function
 function tjekdepot_plugin_activation_function()
