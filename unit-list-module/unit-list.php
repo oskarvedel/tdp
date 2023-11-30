@@ -22,6 +22,23 @@ function sort_depotrum_by_price($depotrum_items)
     return $AllDepotrumArray;
 }
 
+function extract_evenly_spaced($array, $num_values)
+{
+    $size = count($array);
+    if ($num_values > $size) {
+        return $array;
+    }
+
+    $step = intval($size / $num_values);
+    $result = [];
+
+    for ($i = 0; $i < $size; $i += $step) {
+        $result[] = $array[$i];
+    }
+
+    return $result;
+}
+
 // Define the shortcode and the function to execute when the shortcode is used.
 function custom_depotrum_list_func()
 {
@@ -35,13 +52,16 @@ function custom_depotrum_list_func()
 
         if ($depotrum_items && !empty($depotrum_items) && !$hide_units) {
             $IdsSortedByPrice = sort_depotrum_by_price($depotrum_items);
+            if (geodir_is_page('post_type') || geodir_is_page('search')) {
+                $IdsSortedByPrice = extract_evenly_spaced($IdsSortedByPrice, 4);
+            }
             $OutputArray = [];
             $finalOutput = '<div class="depotrum-list">';
             $partner = $current_pod->field("partner");
 
             $output = '';
 
-            if ($partner == 1) {
+            if ($partner != 1) {
                 foreach ($IdsSortedByPrice as $depotrum) {
                     $id = $depotrum->id;
                     if (get_post_meta($id, 'available', true)) {
@@ -130,13 +150,13 @@ function custom_depotrum_list_func()
                 }
             }
 
-            $counter = 0;
-            foreach ($OutputArray as $arrayItem) {
-                if (geodir_is_page('post_type')  || geodir_is_page('search')) {
-                    if (++$counter >= 4) break;
-                }
-                $finalOutput .= $arrayItem;
-            }
+            // $counter = 0;
+            // foreach ($OutputArray as $arrayItem) {
+            //     if (geodir_is_page('post_type')  || geodir_is_page('search')) {
+            //         if (++$counter >= 4) break;
+            //     }
+            //     $finalOutput .= $arrayItem;
+            // }
 
             foreach ($OutputArray as $arrayItem) {
                 $finalOutput .= $arrayItem;
