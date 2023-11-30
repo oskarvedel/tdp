@@ -11,7 +11,6 @@ function gd_location_statistics_text_func($atts)
 
      $gd_place_names = get_post_meta($gd_location_id, 'gd_place_names', true);
      $schools = get_post_meta($gd_location_id, 'schools', false);
-     echo var_dump($schools);
 
      //return if not enough data
      if ($num_of_gd_places <= 2) {
@@ -31,18 +30,16 @@ function gd_location_statistics_text_func($atts)
 
      //add content to output
      $output .= $first_paragraph;
-     $output .= '<hr class="solid">';
+     $output .= '<hr class="line">';
      $output .= generate_price_table();
-     $output .= '<hr class="solid">';
+     $output .= '<hr class="line">';
      $output .= $second_paragraph;
-     $output .= '<hr class="solid">';
+     $output .= '<hr class="line">';
      $output .= $third_paragraph;
-     $output .= '<hr class="solid">';
+     $output .= '<hr class="line">';
      $output .= generate_schools_paragraph($schools);
-     $output .= '<hr class="solid">';
+     $output .= '<hr class="line">';
      $output .= generate_selfstorage_provider_list($gd_place_names);
-
-
 
      //relace variable placeholders with data
      $output = str_replace("[num of gd_places]", $num_of_gd_places, $output);
