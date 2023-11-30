@@ -31,11 +31,15 @@ function gd_location_statistics_text_func($atts)
 
      //add content to output
      $output .= $first_paragraph;
+     $output .= '<hr class="solid">';
      $output .= generate_price_table();
+     $output .= '<hr class="solid">';
      $output .= $second_paragraph;
-     $output .= $price_table;
+     $output .= '<hr class="solid">';
      $output .= $third_paragraph;
+     $output .= '<hr class="solid">';
      $output .= generate_schools_paragraph($schools);
+     $output .= '<hr class="solid">';
      $output .= generate_selfstorage_provider_list($gd_place_names);
 
 
