@@ -10,7 +10,8 @@ function gd_location_statistics_text_func($atts)
      $archive_title_trimmed = substr(get_the_archive_title(), 2);
 
      $gd_place_names = get_post_meta($gd_location_id, 'gd_place_names', true);
-     $schools = get_post_meta($gd_location_id, 'schools', false);
+     $schools = get_post_meta($gd_location_id, 'schools', true);
+     $sublocations = get_post_meta($gd_location_id, 'sublocations', false);
 
      //return if not enough data
      if ($num_of_gd_places <= 2) {
@@ -38,6 +39,8 @@ function gd_location_statistics_text_func($atts)
      $output .= $third_paragraph;
      $output .= '<hr class="line">';
      $output .= generate_schools_paragraph($schools);
+     $output .= '<hr class="line">';
+     $output .= generate_neighbourhoods_paragraph($sublocations);
      $output .= '<hr class="line">';
      $output .= generate_selfstorage_provider_list($gd_place_names);
 
@@ -139,12 +142,13 @@ function generate_schools_paragraph($schools)
      <p class="three-columns">Hvis du skal flytte til [location] for at studere studere på ';
      $schools_second_paragraph = 'kan du få mere plads i din studiebolig med et depotrum. Studieboliger har ofte meget begrænset plads, og du kan undgå at rod af tøj og bøger, du ikke bruger hele året, ligger og roder. Et depotrum kan også være en idé for internationale studerende, der skal have opbevaret deres ejendele imens de er hjemme på sommerferie.</p>';
      if (!empty($schools)) {
+          $schools_array = explode(",", $schools);
           $return_text = '';
           $return_text .=  $schools_first_paragraph;
-          foreach ($schools as $key => $school) {
-               if ($key === count($schools) - 2) {
+          foreach ($schools_array as $key => $school) {
+               if ($key === count($schools_array) - 2) {
                     $return_text .=  $school  . ' eller ';
-               } elseif ($key === count($schools) - 1) {
+               } elseif ($key === count($schools_array) - 1) {
                     $return_text .=  $school . ' ';
                } else {
                     $return_text .=  $school  . ', ';
@@ -155,28 +159,21 @@ function generate_schools_paragraph($schools)
      }
 }
 
-function generate_related_locations_text($schools)
+function generate_neighbourhoods_paragraph($sublocations)
 {
-     $schools_first_paragraph = '<h2>Udvid din studiebolig i [location] med et depotrum</h2>
-     <p class="three-columns">Hvis du skal flytte til [location] for at studere studere på ';
-     $schools_second_paragraph = 'kan du få mere plads i din studiebolig med et depotrum. Studieboliger har ofte meget begrænset plads, og du kan undgå at rod af tøj og bøger, du ikke bruger hele året, ligger og roder. Et depotrum kan også være en idé for internationale studerende, der skal have opbevaret deres ejendele imens de er hjemme på sommerferie.</p>';
-     if (!empty($schools)) {
-          $return_text = '';
-          $return_text .=  $schools_first_paragraph;
-          foreach ($schools as $key => $school) {
-               if ($key === count($schools) - 2) {
-                    $return_text .=  $school  . ' eller ';
-               } elseif ($key === count($schools) - 1) {
-                    $return_text .=  $school . ' ';
-               } else {
-                    $return_text .=  $school  . ', ';
-               }
+     $neighbourhoods_first_paragraph = '<h2>Bydele i Åarhus</h2>';
+     if (!empty($sublocations)) {
+          $return_text = '<p>';
+          $return_text .=  $neighbourhoods_first_paragraph;
+          foreach ($sublocations as $key => $sublocation) {
+               $title = '<strong>' . get_the_title($sublocation) . '</strong>';
+               $description = str_replace('<p>', '', get_the_content(null, false, $sublocation));
+               $return_text .= $title . $description;
           }
-          $return_text .=  $schools_second_paragraph;
+          $return_text .= '</p>';
           return $return_text;
      }
 }
-
 
 $text_template = '
           <p>[average price]
