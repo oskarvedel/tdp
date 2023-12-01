@@ -39,9 +39,7 @@ function gd_location_statistics_text_func($atts)
      $output .= $third_paragraph;
      $output .= '<hr class="line">';
      $output .= generate_schools_paragraph($schools);
-     $output .= '<hr class="line">';
      $output .= generate_neighbourhoods_paragraph($sublocations);
-     $output .= '<hr class="line">';
      $output .= generate_selfstorage_provider_list($gd_place_names);
 
      //relace variable placeholders with data
@@ -155,6 +153,7 @@ function generate_schools_paragraph($schools)
                }
           }
           $return_text .=  $schools_second_paragraph;
+          $return_text .= '<hr class="line">';
           return $return_text;
      }
 }
@@ -171,6 +170,7 @@ function generate_neighbourhoods_paragraph($sublocations)
                $return_text .= $title . $description;
           }
           $return_text .= '</p>';
+          $return_text .= '<hr class="line">';
           return $return_text;
      }
 }
