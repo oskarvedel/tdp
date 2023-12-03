@@ -6,6 +6,7 @@ function consolidate_geolocations()
     $geodir_post_locations = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}geodir_post_locations", OBJECT);
     $geodir_post_neighbourhoods = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}geodir_post_neighbourhood", OBJECT);
     $geolocations = get_posts(array('post_type' => 'geolocations', 'posts_per_page' => -1));
+
     if (empty($geodir_post_locations) || empty($geodir_post_neighbourhoods)) {
         trigger_error("No geodir_post_locations or geodir_post_neighbourhoods found", E_USER_WARNING);
         return;
@@ -37,22 +38,24 @@ function geolocations_sanity_check($geodir_post_locations, $geodir_post_neighbou
 {
     $emailoutput = "";
 
+    // var_dump($geodir_post_neighbourhoods);
+
     //check if geolocation post title matches display_name
     foreach ($geolocations as $geolocation) {
         if ($geolocation->post_title !== $geolocation->display_name) {
-            $message = "Geolocation title: " . $geolocation->post_title . " does not match own display_name: " . $geolocation->display_name . "\r\n";
+            $message = "Geolocation title: " . $geolocation->post_title . " does not match own display_name: " . $geolocation->display_name . "<br>";
             trigger_error($message, E_USER_WARNING);
             $emailoutput .= $message;
         }
     }
 
-    //check if geolocation post title matches geodir_post_location city
+    //check if geolocation post title matches geodir_post_location city or geodir_post_neighbourhood hood_name
     foreach ($geolocations as $geolocation) {
         $titles = array_column($geolocations, 'post_title');
         if ($geolocation->post_title === $geolocation->display_name) {
             //var_dump($geolocation->gd_location_id);
             $geodir_post_location = $geodir_post_locations[array_search($geolocation->gd_location_id, array_column($geodir_post_locations, 'location_id'))]->city;
-            $geodir_post_neighbourhood = $geodir_post_neighbourhoods[array_search($geolocation->gd_location_id, array_column($geodir_post_neighbourhoods, 'hood_location_id'))]->hood_name;
+            $geodir_post_neighbourhood = $geodir_post_neighbourhoods[array_search($geolocation->gd_location_id, array_column($geodir_post_neighbourhoods, 'hood_id'))]->hood_name;
             if ($geodir_post_location !== $geolocation->post_title && $geodir_post_neighbourhood !== $geolocation->post_title) {
                 $message = "Geolocation title: " . $geolocation->post_title . " does not match name of associated gd_location: " . $geodir_post_location . " or gd_neighbourhood: " . $geodir_post_neighbourhood . "\r\n";
                 trigger_error($message, E_USER_WARNING);
@@ -85,15 +88,6 @@ function find_duplicate_geolocations($geolocations)
     if ($emailoutput != "") {
         send_email($emailoutput, 'Duplicate geolocation(s) found');
     }
-}
-
-function send_email($body, $subject)
-{
-    $to = get_option('admin_email');
-    $subject = 'Geolocation(s) created';
-    $headers = 'From: system@tjekdepot.dk <system@tjekdepot.dk>' . "\r\n";
-
-    wp_mail($to, $subject, $body, $headers);
 }
 
 function create_missing_geolocations($geodir_post_locations_ids, $geodir_post_neighbourhoods_ids, $geolocations_ids, $geodir_post_locations, $geodir_post_neighbourhoods)
@@ -151,4 +145,13 @@ function create_missing_geolocations($geodir_post_locations_ids, $geodir_post_ne
     if ($emailoutput != "") {
         send_email($emailoutput, 'Geolocation(s) created');
     }
+}
+
+function send_email($body, $subject)
+{
+    $to = get_option('admin_email');
+    $subject = 'Geolocation(s) created';
+    $headers = 'From: system@tjekdepot.dk <system@tjekdepot.dk>' . "\r\n";
+
+    wp_mail($to, $subject, $body, $headers);
 }
