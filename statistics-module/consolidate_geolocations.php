@@ -32,35 +32,31 @@ function consolidate_geolocations()
     create_missing_geolocations($geodir_post_locations_ids, $geodir_post_neighbourhoods_ids, $geolocations_ids, $geodir_post_locations, $geodir_post_neighbourhoods);
     find_duplicate_geolocations($geolocations);
     geolocations_sanity_check($geodir_post_locations, $geodir_post_neighbourhoods, $geolocations);
+    consolidate_gd_places($geolocations, $geodir_post_locations, $geodir_post_neighbourhoods);
 }
 
+function consolidate_gd_places($geolocations, $geodir_post_locations, $geodir_post_neighbourhoods)
+{
+    $gd_places = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}geodir_post_locations", OBJECT);
+    $emailoutput = "";
+    foreach ($geolocations as $geolocation) {
+        $geodir_post_location = $geodir_post_locations[array_search($geolocation->gd_location_id, array_column($geodir_post_locations, 'location_id'))];
+        $geodir_post_neighbourhood = $geodir_post_neighbourhoods[array_search($geolocation->gd_location_id, array_column($geodir_post_neighbourhoods, 'hood_id'))];
+        $gd_place_list = get_post_meta($geolocation->ID, 'gd_place_list', true);
+}
 function geolocations_sanity_check($geodir_post_locations, $geodir_post_neighbourhoods, $geolocations)
 {
     $emailoutput = "";
-
-    // var_dump($geodir_post_neighbourhoods);
-
-    //check if geolocation post title matches display_name
-    foreach ($geolocations as $geolocation) {
-        if ($geolocation->post_title !== $geolocation->display_name) {
-            $message = "Geolocation title: " . $geolocation->post_title . " does not match own display_name: " . $geolocation->display_name . "\r\n";
-            trigger_error($message, E_USER_WARNING);
-            $emailoutput .= $message;
-        }
-    }
-
     //check if geolocation post title matches geodir_post_location city or geodir_post_neighbourhood hood_name
     foreach ($geolocations as $geolocation) {
         $titles = array_column($geolocations, 'post_title');
-        if ($geolocation->post_title === $geolocation->display_name) {
-            //var_dump($geolocation->gd_location_id);
-            $geodir_post_location = $geodir_post_locations[array_search($geolocation->gd_location_id, array_column($geodir_post_locations, 'location_id'))]->city;
-            $geodir_post_neighbourhood = $geodir_post_neighbourhoods[array_search($geolocation->gd_location_id, array_column($geodir_post_neighbourhoods, 'hood_id'))]->hood_name;
-            if ($geodir_post_location !== $geolocation->post_title && $geodir_post_neighbourhood !== $geolocation->post_title) {
-                $message = "Geolocation title: " . $geolocation->post_title . " does not match name of associated gd_location: " . $geodir_post_location . " or gd_neighbourhood: " . $geodir_post_neighbourhood . "\r\n";
-                trigger_error($message, E_USER_WARNING);
-                $emailoutput .= $message;
-            }
+        //var_dump($geolocation->gd_location_id);
+        $geodir_post_location = $geodir_post_locations[array_search($geolocation->gd_location_id, array_column($geodir_post_locations, 'location_id'))]->city;
+        $geodir_post_neighbourhood = $geodir_post_neighbourhoods[array_search($geolocation->gd_location_id, array_column($geodir_post_neighbourhoods, 'hood_id'))]->hood_name;
+        if ($geodir_post_location !== $geolocation->post_title && $geodir_post_neighbourhood !== $geolocation->post_title) {
+            $message = "Geolocation title: " . $geolocation->post_title . " does not match name of associated gd_location: " . $geodir_post_location . " or gd_neighbourhood: " . $geodir_post_neighbourhood . "\r\n";
+            trigger_error($message, E_USER_WARNING);
+            $emailoutput .= $message;
         }
     }
 
@@ -112,7 +108,6 @@ function create_missing_geolocations($geodir_post_locations_ids, $geodir_post_ne
             update_post_meta($new_post, 'gd_location_slug', $missing_geodir_post_location_slug);
             update_post_meta($new_post, 'latitude', $missing_geodir_post_location_latitude);
             update_post_meta($new_post, 'longtitude', $missing_geodir_post_location_longitude);
-            update_post_meta($new_post, 'display_name', $missing_geodir_post_location_title);
             update_post_meta($new_post, 'gd_place_list', []);
         }
     }
@@ -136,7 +131,6 @@ function create_missing_geolocations($geodir_post_locations_ids, $geodir_post_ne
             update_post_meta($new_post, 'gd_location_slug', $missing_geodir_post_hood_slug);
             update_post_meta($new_post, 'latitude', $missing_geodir_post_hood_latitude);
             update_post_meta($new_post, 'longtitude', $missing_geodir_post_hood_longitude);
-            update_post_meta($new_post, 'display_name', $missing_geodir_post_hood_title);
             update_post_meta($new_post, 'parent_location', $missing_geodir_post_hood_parent_location);
             update_post_meta($new_post, 'gd_place_list', []);
         }
