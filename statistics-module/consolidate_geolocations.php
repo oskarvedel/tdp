@@ -29,7 +29,7 @@ function create_missing_geolocations($geodir_post_locations_ids, $geolocations_i
             $missing_geodir_post_location_city_slug = $geodir_post_locations[array_search($id, array_column($geodir_post_locations, 'location_id'))]->city_slug;
             $missing_geodir_post_location_latitude = $geodir_post_locations[array_search($id, array_column($geodir_post_locations, 'location_id'))]->latitude;
             $missing_geodir_post_location_longitude = $geodir_post_locations[array_search($id, array_column($geodir_post_locations, 'location_id'))]->longitude;
-            $message = "geodir_post_location id: " . $id . " and name: " .  $missing_geodir_post_location_city   . " not found in geolocations_ids. Creating new geolocation.";
+            $message = "geodir_post_location id: " . $id . " and name: " .  $missing_geodir_post_location_city   . " not found in geolocations_ids. Creating new geolocation.<br>";
             trigger_error($message, E_USER_WARNING);
             $emailoutput .= $message;
             $new_post = wp_insert_post(array(
