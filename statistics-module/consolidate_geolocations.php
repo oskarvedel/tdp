@@ -30,6 +30,40 @@ function consolidate_geolocations()
 
     create_missing_geolocations($geodir_post_locations_ids, $geodir_post_neighbourhoods_ids, $geolocations_ids, $geodir_post_locations, $geodir_post_neighbourhoods);
     find_duplicate_geolocations($geolocations);
+    geolocations_sanity_check($geodir_post_locations, $geodir_post_neighbourhoods, $geolocations);
+}
+
+function geolocations_sanity_check($geodir_post_locations, $geodir_post_neighbourhoods, $geolocations)
+{
+    $emailoutput = "";
+
+    //check if geolocation post title matches display_name
+    foreach ($geolocations as $geolocation) {
+        if ($geolocation->post_title !== $geolocation->display_name) {
+            $message = "Geolocation title: " . $geolocation->post_title . " does not match own display_name: " . $geolocation->display_name . "\r\n";
+            trigger_error($message, E_USER_WARNING);
+            $emailoutput .= $message;
+        }
+    }
+
+    //check if geolocation post title matches geodir_post_location city
+    foreach ($geolocations as $geolocation) {
+        $titles = array_column($geolocations, 'post_title');
+        if ($geolocation->post_title === $geolocation->display_name) {
+            //var_dump($geolocation->gd_location_id);
+            $geodir_post_location_city = $geodir_post_locations[array_search($geolocation->gd_location_id, array_column($geodir_post_locations, 'location_id'))]->city;
+            //var_dump($geodir_post_location_city);
+            if ($geodir_post_location_city !== $geolocation->post_title) {
+                $message = "Geolocation title: " . $geolocation->post_title . " does not match name of associated gd_location: " . $geodir_post_location_city . "\r\n";
+                trigger_error($message, E_USER_WARNING);
+                $emailoutput .= $message;
+            }
+        }
+    }
+
+    if ($emailoutput != "") {
+        send_email($emailoutput, 'Mismatching geolocation title(s) found');
+    }
 }
 
 function find_duplicate_geolocations($geolocations)
@@ -49,7 +83,7 @@ function find_duplicate_geolocations($geolocations)
     }
 
     if ($emailoutput != "") {
-        send_email($emailoutput, 'duplicate geolocations found');
+        send_email($emailoutput, 'Duplicate geolocation(s) found');
     }
 }
 
