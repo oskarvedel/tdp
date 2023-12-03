@@ -1,6 +1,7 @@
 <?php
 
 require_once dirname(__FILE__) . '/statistics-common.php';
+require_once dirname(__FILE__) . '/consolidate_geolocations.php';
 
 /**
  * Retrieves all gd_place IDs from the current archive result.
@@ -172,6 +173,9 @@ function update_gd_place_list_for_geolocation_func()
     update_post_meta($geolocation_id, 'gd_place_names', $new_gd_place_list['post_names']);
     update_post_meta($geolocation_id, 'gd_place_list', $new_gd_place_list['post_ids']);
     update_post_meta($geolocation_id, 'num of gd_places', count($new_gd_place_list['post_ids']));
+
+
+    consolidate_geolocations();
 }
 
 
