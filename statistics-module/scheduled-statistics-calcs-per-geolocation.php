@@ -174,7 +174,6 @@ function update_gd_place_list_for_geolocation_func()
     update_post_meta($geolocation_id, 'gd_place_list', $new_gd_place_list['post_ids']);
     update_post_meta($geolocation_id, 'num of gd_places', count($new_gd_place_list['post_ids']));
 
-
     consolidate_geolocations();
 }
 

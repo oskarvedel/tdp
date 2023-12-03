@@ -46,10 +46,11 @@ function create_missing_geolocations($geodir_post_locations_ids, $geolocations_i
         }
     }
 
-    if ($emailoutput == "") {
+    if ($emailoutput != "") {
         $to = get_option('admin_email');
         $subject = 'Geolocation(s) created';
         $headers = 'From: system@tjekdepot.dk <system@tjekdepot.dk>' . "\r\n";
+
         wp_mail($to, $subject, $emailoutput, $headers);
     }
 }
