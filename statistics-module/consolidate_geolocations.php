@@ -43,7 +43,7 @@ function geolocations_sanity_check($geodir_post_locations, $geodir_post_neighbou
     //check if geolocation post title matches display_name
     foreach ($geolocations as $geolocation) {
         if ($geolocation->post_title !== $geolocation->display_name) {
-            $message = "Geolocation title: " . $geolocation->post_title . " does not match own display_name: " . $geolocation->display_name . "<br>";
+            $message = "Geolocation title: " . $geolocation->post_title . " does not match own display_name: " . $geolocation->display_name . "\r\n";
             trigger_error($message, E_USER_WARNING);
             $emailoutput .= $message;
         }
