@@ -51,10 +51,10 @@ function geolocations_sanity_check($geodir_post_locations, $geodir_post_neighbou
         $titles = array_column($geolocations, 'post_title');
         if ($geolocation->post_title === $geolocation->display_name) {
             //var_dump($geolocation->gd_location_id);
-            $geodir_post_location_city = $geodir_post_locations[array_search($geolocation->gd_location_id, array_column($geodir_post_locations, 'location_id'))]->city;
-            //var_dump($geodir_post_location_city);
-            if ($geodir_post_location_city !== $geolocation->post_title) {
-                $message = "Geolocation title: " . $geolocation->post_title . " does not match name of associated gd_location: " . $geodir_post_location_city . "\r\n";
+            $geodir_post_location = $geodir_post_locations[array_search($geolocation->gd_location_id, array_column($geodir_post_locations, 'location_id'))]->city;
+            $geodir_post_neighbourhood = $geodir_post_neighbourhoods[array_search($geolocation->gd_location_id, array_column($geodir_post_neighbourhoods, 'hood_location_id'))]->hood_name;
+            if ($geodir_post_location !== $geolocation->post_title && $geodir_post_neighbourhood !== $geolocation->post_title) {
+                $message = "Geolocation title: " . $geolocation->post_title . " does not match name of associated gd_location: " . $geodir_post_location . " or gd_neighbourhood: " . $geodir_post_neighbourhood . "\r\n";
                 trigger_error($message, E_USER_WARNING);
                 $emailoutput .= $message;
             }
