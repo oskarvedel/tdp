@@ -69,7 +69,11 @@ function get_statistics_data_for_list_of_gd_places($gd_place_ids_list)
     // Calculate averages
     foreach ($statistics_data as $field => $value) {
         if (strpos($field, 'average') !== false) {
-            round($statistics_data[$field] = $value / $counter, 2);
+            try {
+                round($statistics_data[$field] = $value / $counter, 2);
+            } catch (Warning $e) {
+                echo $e->getMessage() . " field: " . $statistics_data[$field] . " value: " . $value . " statistics_data var_dump: " . var_dump($statistics_data);
+            }
         }
     }
 
@@ -79,10 +83,14 @@ function get_statistics_data_for_list_of_gd_places($gd_place_ids_list)
 function add_fields($field, $value, $statistics_data)
 {
     //trigger_error("field: " . $field . " value: " . $value . " statistics_data var_dump: " . var_dump($statistics_data), E_USER_WARNING);
-    if (isset($statistics_data[$field])) {
-        return $statistics_data[$field] += $value;
-    } else {
-        return  $value;
+    try {
+        if (isset($statistics_data[$field])) {
+            return $statistics_data[$field] += $value;
+        } else {
+            return  $value;
+        }
+    } catch (Warning $e) {
+        echo $e->getMessage() . " field: " . $statistics_data[$field] . " value: " . $value . " statistics_data var_dump: " . var_dump($statistics_data);
     }
 }
 
