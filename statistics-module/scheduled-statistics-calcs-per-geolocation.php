@@ -78,6 +78,7 @@ function get_statistics_data_for_list_of_gd_places($gd_place_ids_list)
 
 function add_fields($field, $value, $statistics_data)
 {
+   //trigger_error("field: " . $field . " value: " . $value . " statistics_data var_dump: " . var_dump($statistics_data), E_USER_WARNING);
     if (isset($statistics_data[$field])) {
         return $statistics_data[$field] += $value;
     } else {
@@ -131,8 +132,8 @@ function get_statistics_data_for_single_gd_place($gd_place_id)
 
 function update_gd_place_list_for_geolocation_func()
 {
-    consolidate_geolocations();
     //get current list of geolocation ids
+    /*
     $geolocation_id = extract_geolocation_id_via_url();
     if (!$geolocation_id) {
         return;
@@ -141,7 +142,7 @@ function update_gd_place_list_for_geolocation_func()
 
     //get list of place ids from archive result
     $new_gd_place_list = get_all_gd_places_from_archive_result();
-
+*/
     /*
     echo "current gd_place_list var_dump:";
     var_dump($current_gd_place_list);
@@ -150,7 +151,7 @@ function update_gd_place_list_for_geolocation_func()
     echo "new_gd_place_ids_list var_dump:";
     var_dump($new_gd_place_list);
     */
-
+    /*
     $geolocation_slug = extract_geolocation_slug_via_url();
 
     // Check if the lists are different
@@ -174,6 +175,7 @@ function update_gd_place_list_for_geolocation_func()
     update_post_meta($geolocation_id, 'gd_place_names', $new_gd_place_list['post_names']);
     update_post_meta($geolocation_id, 'gd_place_list', $new_gd_place_list['post_ids']);
     update_post_meta($geolocation_id, 'num of gd_places', count($new_gd_place_list['post_ids']));
+    */
 }
 
 

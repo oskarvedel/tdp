@@ -13,4 +13,6 @@ function update_statistics_data()
     trigger_error("updated statistics data for all gd_places", E_USER_WARNING);
     update_statistics_data_for_all_geolocations();
     trigger_error("updated statistics data for all geolocations", E_USER_WARNING);
+    consolidate_geolocations();
+    trigger_error("consolidated geolocations", E_USER_WARNING);
 }

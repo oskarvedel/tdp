@@ -37,13 +37,101 @@ function consolidate_geolocations()
 
 function consolidate_gd_places($geolocations, $geodir_post_locations, $geodir_post_neighbourhoods)
 {
-    $gd_places = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}geodir_post_locations", OBJECT);
+    global $wpdb;
+    $geodir_post_locations_table = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}geodir_gd_place_detail", OBJECT);
+
+    $all_gd_places = get_posts(array('post_type' => 'gd_place', 'posts_per_page' => -1));
+
+    //echo "gd_places count: " . count($all_gd_places);
+    //echo "gd_places_table count: " . count($geodir_post_locations_table);
+
     $emailoutput = "";
     foreach ($geolocations as $geolocation) {
-        $geodir_post_location = $geodir_post_locations[array_search($geolocation->gd_location_id, array_column($geodir_post_locations, 'location_id'))];
-        $geodir_post_neighbourhood = $geodir_post_neighbourhoods[array_search($geolocation->gd_location_id, array_column($geodir_post_neighbourhoods, 'hood_id'))];
-        $gd_place_list = get_post_meta($geolocation->ID, 'gd_place_list', true);
+        $new_gd_place_list = array();
+        //echo $geolocation->post_title . "\n";
+        foreach ($all_gd_places as $gd_place) {
+            //print_r($gd_place);
+            //echo $gd_place->ID . "\n";
+            $filtered_locations = array_filter($geodir_post_locations_table, function ($location) use ($gd_place) {
+                return $location->post_id == $gd_place->ID;
+            });
+            //print_r($filtered_locations);
+            if (count($filtered_locations) == 1) {
+                $firstLocation = reset($filtered_locations);
+
+                //echo $firstLocation->city;
+                if ($firstLocation->city == $geolocation->post_title) {
+                    $new_gd_place_list[] = $gd_place->ID;
+                }
+                //break;
+            }
+            if (count($filtered_locations) > 1) {
+                echo "found multiple gd_places for: " . $gd_place->ID . "id:"  . "<br>";
+                //var_dump($filtered_locations);
+            }
+            if (count($filtered_locations) == 0) {
+                echo "found zero gd_places for: " . $gd_place->ID . "id:"  . "<br>";
+                var_dump($filtered_locations);
+            }
+            //echo $gd_place->post_title . "\n";
+            if ($gd_place->post_title == $geolocation->post_title) {
+                $new_gd_place_list[] = $gd_place->ID;
+            }
+            //break;
+        }
+        //echo $geolocation->ID;
+        //print_r($new_gd_place_list);
+        $current_gd_place_list = get_post_meta($geolocation->ID, 'gd_place_list', false);
+
+        $current_gd_place_id_list = array_map(function ($post) {
+            return $post['ID'];
+        }, $current_gd_place_list);
+
+        $emailoutput = update_gd_place_list($current_gd_place_id_list, $new_gd_place_list, $geolocation, $emailoutput);
+    }
+    if ($emailoutput != "") {
+        send_email($emailoutput, 'gd_place list(s) updated for geolocation(s)');
+    }
 }
+
+function update_gd_place_list($current_gd_place_id_list, $new_gd_place_list, $geolocation, $emailoutput)
+{
+    //var_dump($current_gd_place_id_list);
+    //var_dump($new_gd_place_list);
+    //Check if the lists are different
+    if ($current_gd_place_id_list !== $new_gd_place_list) {
+        //if current_gd_place_list is unitialized, initialize it to prevent an error in the array_diff call
+        $current_gd_place_id_list = is_bool($current_gd_place_id_list) ? [] : $current_gd_place_id_list;
+        //var_dump($current_gd_place_id_list);
+        // Find the added IDs
+        $different_ids = array_diff($new_gd_place_list, $current_gd_place_id_list);
+        if (!empty($added_ids)) {
+            $message = 'gd_place_ids updated for location ' . $geolocation->post_title . '/' . $geolocation->ID . "\n";
+            $message .= 'New gd_place_list:';
+            foreach ($new_gd_place_list as $item) {
+                $message .= "\n" . $item;
+            }
+            $message .= "\n";
+            $message .= 'Added or removed IDs: ' . implode(', ', $different_ids) . "\n";
+            trigger_error($message, E_USER_WARNING);
+            $emailoutput .= $message;
+        }
+    }
+    update_post_meta($geolocation->ID, 'gd_place_list', $new_gd_place_list);
+    update_post_meta($geolocation->ID, 'num of gd_places', count($new_gd_place_list));
+
+    $gd_place_names = array();
+    foreach ($new_gd_place_list as $gd_place_id) {
+        $gd_place = get_post($gd_place_id);
+        $gd_place_names[] = $gd_place->post_title;
+    }
+
+    update_post_meta($geolocation->ID, 'gd_place_names', $gd_place_names);
+
+    return $emailoutput;
+}
+
+
 function geolocations_sanity_check($geodir_post_locations, $geodir_post_neighbourhoods, $geolocations)
 {
     $emailoutput = "";
@@ -55,7 +143,7 @@ function geolocations_sanity_check($geodir_post_locations, $geodir_post_neighbou
         $geodir_post_neighbourhood = $geodir_post_neighbourhoods[array_search($geolocation->gd_location_id, array_column($geodir_post_neighbourhoods, 'hood_id'))]->hood_name;
         if ($geodir_post_location !== $geolocation->post_title && $geodir_post_neighbourhood !== $geolocation->post_title) {
             $message = "Geolocation title: " . $geolocation->post_title . " does not match name of associated gd_location: " . $geodir_post_location . " or gd_neighbourhood: " . $geodir_post_neighbourhood . "\r\n";
-            trigger_error($message, E_USER_WARNING);
+            //trigger_error($message, E_USER_WARNING); FIX
             $emailoutput .= $message;
         }
     }
