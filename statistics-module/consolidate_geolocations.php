@@ -99,6 +99,10 @@ function update_gd_place_list_for_single_geolocation($current_gd_place_id_list, 
         $different_ids = array_diff($new_gd_place_list, $current_gd_place_id_list);
         if (!empty($different_ids)) {
             $message = 'gd_place_ids updated for location ' . $geolocation->post_title . '/' . $geolocation->ID . "\n";
+            $message .= 'Old gd_place_list:';
+            foreach ($current_gd_place_id_list as $item) {
+                $message .= "\n" . $item;
+            }
             $message .= 'New gd_place_list:';
             foreach ($new_gd_place_list as $item) {
                 $message .= "\n" . $item;
