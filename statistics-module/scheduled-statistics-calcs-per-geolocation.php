@@ -72,7 +72,7 @@ function get_statistics_data_for_list_of_gd_places($gd_place_ids_list)
             try {
                 round($statistics_data[$field] = $value / $counter, 2);
             } catch (Warning $e) {
-                echo $e->getMessage() . " field: " . $statistics_data[$field] . " value: " . $value . " statistics_data var_dump: " . var_dump($statistics_data);
+                trigger_error($e->getMessage() . " field: " . $statistics_data[$field] . " value: " . $value . " statistics_data var_dump: " . var_dump($statistics_data));
             }
         }
     }
@@ -90,7 +90,7 @@ function add_fields($field, $value, $statistics_data)
             return  $value;
         }
     } catch (Warning $e) {
-        echo $e->getMessage() . " field: " . $statistics_data[$field] . " value: " . $value . " statistics_data var_dump: " . var_dump($statistics_data);
+        trigger_error($e->getMessage() . " field: " . $statistics_data[$field] . " value: " . $value . " statistics_data var_dump: " . var_dump($statistics_data));
     }
 }
 
