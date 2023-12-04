@@ -50,16 +50,18 @@ function get_statistics_data_for_list_of_gd_places($gd_place_ids_list)
         if ($statistics_data_for_single_gd_place) {
             // Add depotrum data to the existing statistics data
             foreach ($statistics_data_for_single_gd_place as $field => $value) {
-                if (strpos($field, 'smallest') !== false || strpos($field, 'largest') !== false) {
-                    $statistics_data[$field] = find_smallest_or_largest_m2_size_per_geolocation($field, $value, $statistics_data);
-                } else if (strpos($field, 'lowest') !== false || strpos($field, 'highest') !== false) {
-                    $statistics_data[$field] = find_lowest_or_highest_price_per_geolocation($field, $value, $statistics_data);
-                    if (strpos($field, 'lowest')  !== false) {
-                        //trigger_error("updating lowest price field: " . $field . " with value: " . $value, E_USER_WARNING);
+                if (isset($statistics_data[$field]) && is_numeric($value)) {
+                    if (strpos($field, 'smallest') !== false || strpos($field, 'largest') !== false) {
+                        $statistics_data[$field] = find_smallest_or_largest_m2_size_per_geolocation($field, $value, $statistics_data);
+                    } else if (strpos($field, 'lowest') !== false || strpos($field, 'highest') !== false) {
+                        $statistics_data[$field] = find_lowest_or_highest_price_per_geolocation($field, $value, $statistics_data);
+                        if (strpos($field, 'lowest')  !== false) {
+                            //trigger_error("updating lowest price field: " . $field . " with value: " . $value, E_USER_WARNING);
+                        }
+                    } else {
+                        $statistics_data[$field] = add_fields($field, $value, $statistics_data);
+                        //trigger_error("updarting non-smallestorlargest field: " . $field . " value: " . $value, E_USER_WARNING);
                     }
-                } else {
-                    $statistics_data[$field] = add_fields($field, $value, $statistics_data);
-                    //trigger_error("updarting non-smallestorlargest field: " . $field . " value: " . $value, E_USER_WARNING);
                 }
             }
             $counter++;
@@ -81,7 +83,9 @@ function get_statistics_data_for_list_of_gd_places($gd_place_ids_list)
 
 function add_fields($field, $value, $statistics_data)
 {
-
+    if (!is_numeric($value)) {
+        trigger_error("field: " . $field . " value: " . $value . " is not numeric. statistics_data var_dump: " . var_dump($statistics_data), E_USER_WARNING);
+    }
     if (isset($statistics_data[$field])) {
         return $statistics_data[$field] += $value;
     } else {
