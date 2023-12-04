@@ -78,7 +78,7 @@ function get_statistics_data_for_list_of_gd_places($gd_place_ids_list)
 
 function add_fields($field, $value, $statistics_data)
 {
-   //trigger_error("field: " . $field . " value: " . $value . " statistics_data var_dump: " . var_dump($statistics_data), E_USER_WARNING);
+    //trigger_error("field: " . $field . " value: " . $value . " statistics_data var_dump: " . var_dump($statistics_data), E_USER_WARNING);
     if (isset($statistics_data[$field])) {
         return $statistics_data[$field] += $value;
     } else {
@@ -132,6 +132,7 @@ function get_statistics_data_for_single_gd_place($gd_place_id)
 
 function update_gd_place_list_for_geolocation_func()
 {
+    consolidate_geolocations();
     //get current list of geolocation ids
     /*
     $geolocation_id = extract_geolocation_id_via_url();
@@ -197,7 +198,7 @@ function update_statistics_data_for_all_geolocations()
         foreach ($depotrum_data as $field => $value) {
             update_post_meta($geolocation_id, $field, $value);
             if (strpos($field, 'lowest')  !== false) {
-                trigger_error("updating lowest price field: " . $field . " with value: " . $value .  "for geolocation "  . $geolocation->post_name, E_USER_WARNING);
+                //trigger_error("updating lowest price field: " . $field . " with value: " . $value .  "for geolocation "  . $geolocation->post_name, E_USER_WARNING);
             }
             //trigger_error("updated field: " . $field . " with value: " . $value . "for geolocation" . $geolocation->post_name , E_USER_WARNING);
         }

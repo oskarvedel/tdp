@@ -9,10 +9,10 @@ require_once dirname(__FILE__) . '/gd_location-statistics-text/geolocation-stati
 
 function update_statistics_data()
 {
+    consolidate_geolocations();
+    trigger_error("consolidated geolocations", E_USER_WARNING);
     update_statistics_data_for_all_gd_places();
     trigger_error("updated statistics data for all gd_places", E_USER_WARNING);
     update_statistics_data_for_all_geolocations();
     trigger_error("updated statistics data for all geolocations", E_USER_WARNING);
-    consolidate_geolocations();
-    trigger_error("consolidated geolocations", E_USER_WARNING);
 }
