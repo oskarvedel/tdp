@@ -69,15 +69,38 @@ function update_gd_places_for_all_geolocations($geolocations, $geodir_post_locat
                 $gd_places_matching_city_or_neighbourhood[] = $gd_place_detail->post_id;
             }
         }
+
+        if (empty($gd_places_matching_city_or_neighbourhood)) {
+            return;
+        }
+
+        $message = "geolocation: " . $geolocation->post_title . "\n";
+
         $current_gd_place_list = get_post_meta($geolocation->ID, 'gd_place_list', false);
+
+        // $message .= "current gd_place_list: ";
+        // $message .= var_dump($current_gd_place_list);
+        // foreach ($current_gd_place_list as $item) {
+        //     $message .= "\n" . $item;
+        // }
+        // $message .= "\n";
+
+        // $message .= "new gd_place_list: ";
+        // foreach ($gd_places_matching_city_or_neighbourhood as $item) {
+        //     $message .= "\n" . $item;
+        // }
+        // $message .= "\n";
+        // trigger_error($message, E_USER_WARNING);
 
         if (empty($current_gd_place_list)) {
             $current_gd_place_list = array();
+        } else {
+            $current_gd_place_id_list = array_map(function ($post) {
+                return $post->ID;
+            }, $current_gd_place_list);
         }
 
-        $current_gd_place_id_list = array_map(function ($post) {
-            return $post['ID'];
-        }, $current_gd_place_list);
+
         $emailoutput = "";
         $emailoutput = update_gd_place_list_for_single_geolocation($current_gd_place_id_list, $gd_places_matching_city_or_neighbourhood, $geolocation, $emailoutput);
         if ($emailoutput != "") {
