@@ -139,7 +139,7 @@ function get_statistics_data_for_single_gd_place($gd_place_id)
 
 function update_gd_place_list_for_geolocation_func()
 {
-    consolidate_geolocations();
+    //consolidate_geolocations();
     //get current list of geolocation ids
     /*
     $geolocation_id = extract_geolocation_id_via_url();
