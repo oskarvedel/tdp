@@ -199,7 +199,7 @@ function sort_depotrum_by_m2_size($depotrum_items)
         ];
 
         if ($arrayObject->m2size == null) {
-            trigger_error("Encountered depotrum with no price or m2 size, sorting by m3 size instead. depotrum ID:" .  $id,", E_USER_WARNING);
+            trigger_error("Encountered depotrum with no price or m2 size, sorting by m3 size instead. depotrum ID:" .  $id, E_USER_WARNING);
             throw new Exception('Encountered depotrum with no price or m2 size, sorting by m3 size instead');
         }
         array_push($AllDepotrumArray, $arrayObject);
@@ -226,7 +226,7 @@ function sort_depotrum_by_m3_size($depotrum_items)
         ];
 
         if ($arrayObject->m3size == null) {
-            trigger_error("Encountered depotrum with no price, m2 size or m3 size, giving up on sorting", E_USER_WARNING);
+            trigger_error("Encountered depotrum with no price, m2 size or m3 size, giving up on sorting. depotrum ID:" .  $id, E_USER_WARNING);
         }
 
         array_push($AllDepotrumArray, $arrayObject);
