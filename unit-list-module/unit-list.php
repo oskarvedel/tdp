@@ -169,7 +169,6 @@ function sort_depotrum_by_price($depotrum_items)
             'id' => $id,
             'price' => get_post_meta($id, 'price', true),
         ];
-        echo $arrayObject->price . "<br>";
 
         if ($arrayObject->price == null) {
             trigger_error("Encountered depotrum with no price, sorting by m2 size instead", E_USER_WARNING);
