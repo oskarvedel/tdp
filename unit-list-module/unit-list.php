@@ -60,10 +60,18 @@ function generate_unit_list($finalOutput, $sorted_ids, $partner, $lokationId)
             $relTypeId = getRelTypeId($id);
             $output = '<div class="depotrum-row">';
             $output .= '<div class="flex-container">';
-            $output .= '<div class="m2-column vertical-center">';
-            $output .= '<span class="m2size">' . get_post_meta($relTypeId, 'm2', true) . '</span>';
-            $output .= '<span class="m2label"> m2</span>';
-            $output .= '</div>';
+            if (get_post_meta($relTypeId, 'm2', true) != null) {
+                $output .= '<div class="m2-column vertical-center">';
+                $output .= '<span class="m2size">' . get_post_meta($relTypeId, 'm2', true) . '</span>';
+                $output .= '<span class="m2label"> m2</span>';
+                $output .= '</div>';
+            } else if (get_post_meta($relTypeId, 'm3', true) != null) {
+                $output .= '<div class="m3-column vertical-center">';
+                $output .= '<span class="m3size">' . get_post_meta($relTypeId, 'm3', true) . '</span>';
+                $output .= '<span class="m3label"> m3</span>';
+                $output .= '</div>';
+            }
+
 
             /*$output .= '<div class="placement-column vertical-center">';
             $placement = get_post_meta($relTypeId, 'placement', true);
