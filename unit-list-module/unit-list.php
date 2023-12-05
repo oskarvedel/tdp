@@ -12,29 +12,14 @@ function custom_depotrum_list_func()
         $hide_units = $current_pod->field("hide_units");
 
         if ($depotrum_items && !empty($depotrum_items) && !$hide_units) {
-            $sorted_ids = [];
-            try {
-                $sorted_ids = sort_depotrum_by_price($depotrum_items);
-            } catch (Exception $e) {
-                try {
-                    $sorted_ids = sort_depotrum_by_m2_size($depotrum_items);
-                } catch (Exception $e) {
-                    $sorted_ids = sort_depotrum_by_m3_size($depotrum_items);
-                }
-            }
-
-            if (geodir_is_page('post_type') || geodir_is_page('search')) {
-                $sorted_ids = extract_evenly_spaced($sorted_ids, 4);
-            }
-            $finalOutput = '<div class="depotrum-list">';
             $partner = $current_pod->field("partner");
 
+            $finalOutput = '<div class="depotrum-list">';
             if ($partner == 1) {
-                $finalOutput .= generate_unit_list($finalOutput, $sorted_ids, $partner, $lokationId);
+                $finalOutput .= generate_unit_list($finalOutput, $partner, $lokationId, $depotrum_items);
             } else {
                 $finalOutput .= generate_non_partner_text($finalOutput);
             }
-
             $finalOutput .= "</div>";
 
             if ((geodir_is_page('post_type') || geodir_is_page('search')) && $partner == 1) {
@@ -50,8 +35,22 @@ function custom_depotrum_list_func()
 // Register the shortcode.
 add_shortcode("custom_depotrum_list", "custom_depotrum_list_func");
 
-function generate_unit_list($finalOutput, $sorted_ids, $partner, $lokationId)
+function generate_unit_list($finalOutput, $partner, $lokationId, $depotrum_items)
 {
+    $sorted_ids = [];
+    try {
+        $sorted_ids = sort_depotrum_by_price($depotrum_items);
+    } catch (Exception $e) {
+        try {
+            $sorted_ids = sort_depotrum_by_m2_size($depotrum_items);
+        } catch (Exception $e) {
+            $sorted_ids = sort_depotrum_by_m3_size($depotrum_items);
+        }
+    }
+
+    if (geodir_is_page('post_type') || geodir_is_page('search')) {
+        $sorted_ids = extract_evenly_spaced($sorted_ids, 4);
+    }
     $OutputArray = [];
     $output = '';
     foreach ($sorted_ids as $depotrum) {
@@ -162,7 +161,6 @@ function sort_depotrum_by_price($depotrum_items)
     $AllDepotrumArray = [];
 
     foreach ($depotrum_items as $depotrum) {
-
 
         $id = $depotrum['ID'];
         $arrayObject = (object) [
