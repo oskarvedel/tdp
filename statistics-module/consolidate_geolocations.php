@@ -32,6 +32,7 @@ function consolidate_geolocations()
     create_missing_geolocations($geodir_post_locations_ids, $geodir_post_neighbourhoods_ids, $geolocations_ids, $geodir_post_locations, $geodir_post_neighbourhoods);
     find_duplicate_geolocations($geolocations);
     titles_match_check($geodir_post_locations, $geodir_post_neighbourhoods, $geolocations);
+    //set_sublocations($geodir_post_locations, $geodir_post_neighbourhoods, $geolocations);
     //correct_parent_locations($geodir_post_neighbourhoods, $geodir_post_locations, $geodir_post_neighbourhoods_ids, $geolocations_ids);
     update_gd_places_for_all_geolocations($geolocations, $geodir_post_locations, $geodir_post_neighbourhoods);
 }
