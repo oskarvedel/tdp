@@ -139,7 +139,18 @@ function generate_non_partner_text($finalOutput)
     $current_pod = pods();
 
     $statistics_data_fields = get_statistics_data_for_single_gd_place($current_pod->field("id"));
-    $finalOutput .= '<p class="unit_list_non_partner_text"><small>[location] tilbyder depotrum fra [smallest m2 size] m² til [largest m2 size] m² i prislejet  [lowest price] kr til [highest price] kr. </small></p>';
+    if (empty($statistics_data_fields)) {
+        trigger_error("error in generate_non_partner_text: statistics_data_fields is empty for id: " . $current_pod->field("post_title"), E_USER_WARNING);
+    }
+    $finalOutput .= '<p class="unit_list_non_partner_text"><small>[location] tilbyder depotrum';
+
+    if (($statistics_data_fields['smallest m2 size'] != null) && ($statistics_data_fields['largest m2 size'] != null)) {
+        $finalOutput .= ' fra [smallest m2 size] m² til [largest m2 size] m²';
+    }
+    if (($statistics_data_fields['lowest price'] != null) && ($statistics_data_fields['highest price'] != null)) {
+        $finalOutput .= ' i prislejet [lowest price] kr til [highest price] kr';
+    }
+    $finalOutput .= '. </small></p>';
 
     $gd_place_title = ($current_pod->field("post_title"));
 
