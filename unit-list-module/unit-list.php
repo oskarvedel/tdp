@@ -12,15 +12,25 @@ function custom_depotrum_list_func()
         $hide_units = $current_pod->field("hide_units");
 
         if ($depotrum_items && !empty($depotrum_items) && !$hide_units) {
-            $IdsSortedByPrice = sort_depotrum_by_price($depotrum_items);
+            $sorted_ids = [];
+            try {
+                $sorted_ids = sort_depotrum_by_price($depotrum_items);
+            } catch (Exception $e) {
+                try {
+                    $sorted_ids = sort_depotrum_by_m2_size($depotrum_items);
+                } catch (Exception $e) {
+                    $sorted_ids = sort_depotrum_by_m3_size($depotrum_items);
+                }
+            }
+
             if (geodir_is_page('post_type') || geodir_is_page('search')) {
-                $IdsSortedByPrice = extract_evenly_spaced($IdsSortedByPrice, 4);
+                $sorted_ids = extract_evenly_spaced($sorted_ids, 4);
             }
             $finalOutput = '<div class="depotrum-list">';
             $partner = $current_pod->field("partner");
 
             if ($partner == 1) {
-                $finalOutput .= generate_unit_list($finalOutput, $IdsSortedByPrice, $partner, $lokationId);
+                $finalOutput .= generate_unit_list($finalOutput, $sorted_ids, $partner, $lokationId);
             } else {
                 $finalOutput .= generate_non_partner_text($finalOutput);
             }
@@ -40,14 +50,14 @@ function custom_depotrum_list_func()
 // Register the shortcode.
 add_shortcode("custom_depotrum_list", "custom_depotrum_list_func");
 
-function generate_unit_list($finalOutput, $IdsSortedByPrice, $partner, $lokationId)
+function generate_unit_list($finalOutput, $sorted_ids, $partner, $lokationId)
 {
     $OutputArray = [];
     $output = '';
-    foreach ($IdsSortedByPrice as $depotrum) {
+    foreach ($sorted_ids as $depotrum) {
         $id = $depotrum->id;
         if (get_post_meta($id, 'available', true)) {
-            $relTypeId = get_post_meta($id, 'rel_type', true);
+            $relTypeId = getRelTypeId($id);
             $output = '<div class="depotrum-row">';
             $output .= '<div class="flex-container">';
             $output .= '<div class="m2-column vertical-center">';
@@ -144,17 +154,79 @@ function sort_depotrum_by_price($depotrum_items)
     $AllDepotrumArray = [];
 
     foreach ($depotrum_items as $depotrum) {
+
+
         $id = $depotrum['ID'];
         $arrayObject = (object) [
             'id' => $id,
             'price' => get_post_meta($id, 'price', true),
         ];
+        echo $arrayObject->price . "<br>";
+
+        if ($arrayObject->price == null) {
+            trigger_error("Encountered depotrum with no price, sorting by m2 size instead", E_USER_WARNING);
+            throw new Exception('Encountered depotrum with no price, sorting by m2 size instead');
+        }
 
         array_push($AllDepotrumArray, $arrayObject);
     }
 
     usort($AllDepotrumArray, function ($a, $b) {
         return $a->price > $b->price ? 1 : -1;
+    });
+
+    return $AllDepotrumArray;
+}
+
+function sort_depotrum_by_m2_size($depotrum_items)
+{
+    $AllDepotrumArray = [];
+
+    foreach ($depotrum_items as $depotrum) {
+
+        $id = $depotrum['ID'];
+        $relTypeId = getRelTypeId($id);
+        $arrayObject = (object) [
+            'id' => $id,
+            'm2size' => get_post_meta($relTypeId, 'm2', true)
+        ];
+
+        if ($arrayObject->m2size == null) {
+            trigger_error("Encountered depotrum with no price or m2 size, sorting by m3 size instead", E_USER_WARNING);
+            throw new Exception('Encountered depotrum with no price or m2 size, sorting by m3 size instead');
+        }
+        array_push($AllDepotrumArray, $arrayObject);
+    }
+
+    usort($AllDepotrumArray, function ($a, $b) {
+        return $a->m2size > $b->m2size ? 1 : -1;
+    });
+
+    return $AllDepotrumArray;
+}
+
+function sort_depotrum_by_m3_size($depotrum_items)
+{
+    $AllDepotrumArray = [];
+
+    foreach ($depotrum_items as $depotrum) {
+
+        $id = $depotrum['ID'];
+        $relTypeId = getRelTypeId($id);
+        $arrayObject = (object) [
+            'id' => $id,
+            'm3size' => get_post_meta($relTypeId, 'm3', true)
+        ];
+
+        if ($arrayObject->m3size == null) {
+            trigger_error("Encountered depotrum with no price, m2 size or m3 size, giving up on sorting", E_USER_WARNING);
+        }
+
+        array_push($AllDepotrumArray, $arrayObject);
+    }
+
+    usort($AllDepotrumArray, function ($a, $b) {
+        return $a->m3size > $b->m3size ? 1 : -1;
     });
 
     return $AllDepotrumArray;
@@ -175,4 +247,15 @@ function extract_evenly_spaced($array, $num_values)
     }
 
     return $result;
+}
+
+function getRelTypeId($id)
+{
+    $relType = get_post_meta($id, 'rel_type', true);
+    if (is_array($relType)) {
+        trigger_error("Rel type is an array for depotrum with id: " . $id);
+        return $relType['ID'];
+    } else {
+        return $relType;
+    }
 }
